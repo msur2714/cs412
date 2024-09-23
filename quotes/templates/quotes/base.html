@@ -2,14 +2,15 @@
 A template with common HTML code that will be reused by all of the other templates.-->
 
 {% load static %}
-
 <html>
     <head>
         <title>Quote of the Day</title>
-        <link rel="stylesheet" href="{%static 'styles.css'%}">
+        <link rel="stylesheet" href="{% static 'styles.css' %}">
     </head>
 
     <body>
+
+        <header><h1>Quote of the Day</h1></header>
         <nav>
             <ul>
                 <li><a href="{% url 'quote' %}">Quote of the Day</a></li>

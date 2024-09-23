@@ -28,9 +28,8 @@ def home(request):
     template_name = 'quotes/home.html'
 
     # Select a quote and image
-    random_number = random.randint(0,2)
-    selected_quote = QUOTES[random_number]
-    selected_image = IMAGES[random_number]
+    selected_quote = random.choice(QUOTES)
+    selected_image = random.choice(IMAGES)
 
     # create a dictionary of context variables for the template:
     context = {
@@ -67,9 +66,8 @@ def quote(request):
     template_name = 'quotes/quote.html'
 
     # Randomly select a quote and image
-    random_number = random.randint(0,2)
-    selected_quote = QUOTES[random_number]
-    selected_image = IMAGES[random_number]
+    selected_quote = random.choice(QUOTES)
+    selected_image = random.choice(IMAGES)
 
     # create a dictionary of context variables for the template:
     context = {
