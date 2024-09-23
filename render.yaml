@@ -1,22 +1,19 @@
-databases:
-  - name: cs412
-    plan: free
-    databaseName: cs412
-    user: cs412
-
+# This is a basic example Blueprint for a Django web service and
+# the PostgreSQL database it connects to.
 services:
-  - type: web
+  - type: web # A Python web service named django-app running on a free instance
     plan: free
-    name: cs412
+    name: django-app
     runtime: python
+    repo: https://github.com/msur2714/cs412
     buildCommand: "./build.sh"
-    startCommand: "python -m gunicorn cs412/quotes.asgi:application -k uvicorn.workers.UvicornWorker"
+    startCommand: "python -m gunicorn cs412.asgi:application -k uvicorn.workers.UvicornWorker"
     envVars:
-      - key: DATABASE_URL
+      - key: DATABASE_URL # Sets DATABASE_URL to the connection string of the django-app-db database
         fromDatabase:
-          name: cs412
+          name: django-app-db
           property: connectionString
-      - key: SECRET_KEY
-        generateValue: true
-      - key: WEB_CONCURRENCY
-        value: 4
+
+databases:
+  - name: django-app-db # A PostgreSQL database named django-app-db running on a free instance
+    plan: free
