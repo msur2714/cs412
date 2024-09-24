@@ -22,9 +22,15 @@ from django.conf import settings
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("hw/", include("hw.urls")), #create a URL hw/, and associate it with URLs in another file 
-    path("quotes/", include("quotes.urls")), #create a URL quotes/, and associate it with URLs in another file 
+    path("quotes/", include("quotes.urls")), #create a URL quotes/, and associate it with URLs in another file
+    path("formdata/", include("formdata.urls")), #create a URL formdata/, and associate it with URLs in another file
+
 ] + static(settings.STATIC_URL,
            document_root=settings.STATIC_ROOT)
+
+
+
+
 
 
 
