@@ -1,0 +1,40 @@
+<!-- restaurant/templates/order.html
+Show a basic HTML form to the client. -->
+
+{% extends 'restaurant/base.html' %}
+{% block title %}Order{% endblock %}
+
+{% block content %}
+
+<h2>Place Your Order</h2>
+
+<form method="POST" action="{% url 'confirmation' %}">
+    {% csrf_token %}
+    <p>Menu</p>
+    
+    <label><input type="checkbox" name="items" value="Pizza"> Pizza ($12)</label><br>
+    <label><input type="checkbox" name="items" value="Burger"> Burger ($10)</label><br>
+    <label><input type="checkbox" name="items" value="Pasta"> Pasta ($8)</label><br>
+    <label><input type="checkbox" name="items" value="Salad"> Salad ($6)</label><br>
+    
+    <h3>Today's Special</h3>
+    <label><input type="checkbox" name="special" value="daily_special">{{daily_special}}</label><br>
+    
+    <label for="instructions">Special Instructions:</label><br>
+    <textarea id="instructions" name="instructions"></textarea><br>
+
+    <h3>Customer Information</h3>
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name" required><br>
+
+    <label for="phone">Phone:</label>
+    <input type="text" id="phone" name="phone" required><br>
+
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" required><br>
+
+    <button type="submit">Submit Order</button>
+
+</form>
+
+{% endblock %}

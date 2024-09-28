@@ -1,0 +1,36 @@
+<!-- restaurant/templates/restaurant/base.html 
+A template with common HTML code that will be reused by all of the other templates.-->
+
+{% load static %}
+
+<html>
+    <head>
+        <title>The Golden Spoon</title>
+        <link rel="stylesheet" href="{% static 'styles.css' %}">
+    </head>
+
+    <body>
+        <div class="sidebar">
+            <nav>
+                <a href="{% url 'main' %}">Main Page</a>
+                <a href="{% url 'order' %}">Order</a>
+            </nav>
+        </div>
+
+        <div class="main-content">
+            <header>
+                <h1>The Golden Spoon</h1>
+            </header>
+
+            <div class="container">
+                {% block content %}
+                <!-- Content will be inserted here -->
+                {% endblock %}
+            </div>
+        </div>
+
+        <footer>
+            <p>&copy; 2024 The Golden Spoon | All rights reserved.</p>
+        </footer>
+    </body>
+</html>

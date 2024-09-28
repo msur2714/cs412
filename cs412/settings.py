@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "hw", #add new apps here
     "quotes",
     "formdata", 
+    "restaurant",
 ]
 
 MIDDLEWARE = [
@@ -83,17 +84,6 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": BASE_DIR / "db.sqlite3",
-    }
-}
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'msu2714',
-        'USER': 'msur2714',
-        'PASSWORD': 'genie',
-        'HOST': 'localhost',  # or your DB host
-        'PORT': '5432',       # Default PostgreSQL port
     }
 }
 
