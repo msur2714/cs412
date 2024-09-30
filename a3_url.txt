@@ -1,2 +1,1 @@
-https://cs412-git-master-msur2714s-projects.vercel.app/quotes
-
+https://mighty-beach-02959-37be3da9b685.herokuapp.com/quotes/
