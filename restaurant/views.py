@@ -39,19 +39,10 @@ def confirmation(request):
         email = request.POST.get('email')
         items_ordered = request.POST.getlist('items')
 
-        # Calculate total price and ready time
-        prices = {'Pizza': 12, 'Burger': 10, 'Pasta': 8, 'Salad': 6}
-        total_price = sum([prices[item] for item in items_ordered])
-
-        ready_time = random.randint(30, 60)  # ready in 30-60 minutes
-
         context = {
             'name': name,
             'phone': phone,
             'email': email,
-            'items_ordered': items_ordered,
-            'total_price': total_price,
-            'ready_time': ready_time,
         }
 
         return render(request, 'restaurant/confirmation.html', context)
