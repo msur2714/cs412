@@ -16,7 +16,8 @@
         <img src="{{a.image_url}}" alt="{{a.image_url}}">
 
         <div>
-            <h2>{{a.title}}</h2>
+            <!-- a.pk is the primary key (number) on the Article identified by a -->
+            <h2><a href="{% url 'article' a.pk %}">{{a.title}}</a></h2>
             <h3>by {{a.author}} at {{a.published}}</h3>
 
             <p>

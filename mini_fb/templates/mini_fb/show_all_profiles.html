@@ -5,14 +5,12 @@
     <h2>All Profiles</h2>
 
     <div class="profile-list">
-        {% for p in profiles %}
-        <div class="profile">            
-            <img src="{{ p.image_url }}" alt="{{ p.first_name }}'s profile picture" width="350px">
-            <h2>{{ p.first_name }} {{ p.last_name }}</h2>
-            <p>{{ p.city }}</p>
-            <p>{{ p.email_address }}</p>
+
+        {% for profile in profiles %}
+        <div class="profile">    
+            <img src="{{ profile.image_url }}" alt="{{ profile.first_name}} {{profile.last_name}}'s image" style="width: 350px; height: auto;">
+            <h2><a href="{% url 'show_profile' profile.pk %}">{{ profile.first_name}} {{profile.last_name}}</a></h2>
         </div>
         {% endfor %}
-    </div>
     
 {% endblock %}

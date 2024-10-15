@@ -20,6 +20,29 @@ class Profile(models.Model):
 
     def __str__(self) -> str:
         '''Return a string representation of this object.'''
-        
         return f'{self.first_name} {self.last_name}'
+    
+    def get_status_messages(self):
+        '''Return all of the Status Messages on this Profile.'''
+        status_messages = StatusMessage.objects.filter(profile=self).order_by('-timestamp')
+        return status_messages
+
+    def get_absolute_url(self):
+        return reverse('profile', kwargs={'pk': self.pk})  
+    
+    
+class StatusMessage(models.Model): 
+    ''''Create StatusMessage which will model the data 
+        attributes of Facebook status message.
+        
+        Data attributes: timestamp, message, profile.'''
+
+    timestamp = models.DateTimeField(auto_now=True)
+    message = models.TextField(blank=False)
+    profile = models.ForeignKey("Profile", on_delete=models.CASCADE)
+
+    def __str__(self) -> str:
+        '''Return a string representation of this object.'''
+        return f'{self.message} posted on {self.timestamp}'
+
 

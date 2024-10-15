@@ -1,0 +1,119 @@
+/* General styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f7eaea; 
+    color: #333;
+}
+
+header {
+    background-color: #f5c6d4; 
+    color: white;
+    padding: 20px;
+    text-align: center;
+    font-size: 1.8em;
+    font-weight: bold;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+header h1 {
+    margin: 0;
+}
+
+nav {
+    height: 100vh;
+    width: 200px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: #f9e0e7; 
+    padding-top: 60px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    z-index: 100; 
+}
+
+nav ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+nav ul li {
+    padding: 10px;
+    text-align: center;
+}
+
+nav ul li a {
+    display: block;
+    color: #6a1b4d; 
+    text-decoration: none;
+    font-weight: bold;
+    padding: 10px;
+    border-radius: 4px;
+}
+
+nav ul li a:hover {
+    background-color: #f5c6d4; 
+    color: white;
+}
+
+.container {
+    margin-left: 220px; 
+    padding: 20px;
+    z-index: 1;
+}
+
+/* Profile Cards */
+.profile-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around; 
+}
+
+.profile {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 30%; 
+    margin-bottom: 20px;
+    padding: 20px;
+    text-align: center;
+}
+
+.profile h2 {
+    font-size: 1.2em;
+    margin: 10px 0;
+}
+
+.profile p {
+    color: #666;
+    font-size: 0.9em;
+}
+
+.status-section {
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+.status-message {
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.status-message p {
+    font-size: 14px;
+    margin: 0 0 5px 0;
+}
+
+.status-message small {
+    font-size: 12px;
+    color: #666;
+}
+
+hr {
+    border: 0;
+    border-top: 1px solid #eee;
+    margin: 10px 0;
+}
