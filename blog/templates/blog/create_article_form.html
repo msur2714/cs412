@@ -1,12 +1,12 @@
-<!-- blog/templates/blog/create_comment_form.html -->
+<!-- blog/templates/blog/create_article_form.html -->
 
 {% extends 'blog/base.html' %}
 
 {% block content %}
 
-<h2>Create a Comment</h2>
+<h2>Create a new Article</h2>
 
-<form method="POST"> 
+<form method="POST" enctype="multipart/form-data"> 
     {% csrf_token %}
     <!-- simple way to display the form, all one line -->
     <!-- {{form}} -->
@@ -19,9 +19,9 @@
 
         <tr>
             <td></td>
-            <td><input type="submit" name="submit" value="Create Comment"></td>
+            <td><input type="submit" name="submit" value="Create Article"></td>
 
-            <form action="{% url 'article' article.pk %}">
+            <form action="{% url 'show_all' %}">
                 <input type="submit" name="Cancel" value="Cancel">
             </form>
         </tr>

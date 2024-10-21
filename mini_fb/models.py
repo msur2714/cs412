@@ -45,4 +45,18 @@ class StatusMessage(models.Model):
         '''Return a string representation of this object.'''
         return f'{self.message} posted on {self.timestamp}'
 
+    def get_images(self):
+        '''Return a QuerySet of all images related to this status message.'''
+        return Image.objects.filter(status_message=self)
+    
+class Image(models.Model):
+    ''''Create Image data model which encapsulates the idea 
+        of an image file (not a URL) that is stored in the 
+        Django media directory. which will model the data 
+        
+        Data attributes: image_file, status_message, timestamp'''
+    
+    image_file = models.ImageField(upload_to='images/') 
+    status_message = models.ForeignKey(StatusMessage, on_delete=models.CASCADE)
+    upload_timestamp = models.DateTimeField(auto_now=True)
 

@@ -11,7 +11,13 @@
 <main class="grid-container">
 
     <article class="featured">  
-        <img src="{{article.image_url}}" alt="{{article.image_url}}">
+        <!-- <img src="{{article.image_url}}" alt="{{article.image_url}}"> -->
+
+        {% if a.image_file %}
+        <img src="{{article.image_file.url}}" alt="{{article.image_file.url}}">
+        {% else %}
+        No image_file avaliable
+        {% endif %}
 
         <div>
             <h2>{{article.title}}</h2>

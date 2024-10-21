@@ -1,18 +1,17 @@
 <!-- mini_fb/templates/mini_fb/show_all.html -->
+
 {% extends 'mini_fb/base.html' %}
 
 <h1>Show All Profiles</h1>
 
 {% block content %}
 
-<h1>{{ profile.first_name}} {{profile.last_name}}</h1>
-
 <div class="profile-list">
     <div class="profile">            
-        <img src="{{ profile.image_url }}" alt="{{ profile.first_name}} {{profile.last_name}}'s profile picture" width="350px">
+        <img src="{{ profile.image_url }}" alt="{{ profile.first_name }} {{ profile.last_name }}'s profile picture" width="350px">
         <h2>{{ profile.first_name }} {{ profile.last_name }}</h2>
-        <p>{{ profile.city }}</p>
-        <p>{{ profile.email_address }}</p>
+        <p>City: {{ profile.city }}</p>
+        <p>Email: {{ profile.email_address }}</p>
     </div> 
 
     <div>
@@ -24,6 +23,24 @@
                     <div class="status-message">
                         <p>{{ status.message }}</p>
                         <small>Posted on: {{ status.timestamp|date:"Y-m-d H:i:s" }}</small>
+
+                        <!-- Display images associated with the status message -->
+                        <div class="status-images">
+                            {% for img in status.get_images %}
+                                <img src="{{ img.image_file.url }}" alt="Image from status message" width="300px">
+                                <small>Uploaded on: {{ img.upload_timestamp|date:"Y-m-d H:i:s" }}</small>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Update and Delete Links for Status Messages -->
+                        <h4>
+                            <form action="{% url 'update_status' status.pk %}" method="GET">
+                                <button type="submit">Update Status</button>
+                            </form>
+                            <form action="{% url 'delete_status' status.pk %}" method="GET">
+                                <button type="submit">Delete Status</button>
+                            </form>
+                        </h4>
                     </div>
                     <hr> 
                 {% endfor %}
@@ -31,14 +48,18 @@
 
         {% else %}
             <h2>No Status Messages</h2>
-            {% endif %}
+        {% endif %}
         
         <h4>
-            <a href="{% url 'create_status' profile.pk %}">Create Status Message</a>
+            <form action="{% url 'create_status' profile.pk %}" method="GET">
+                <button type="submit">Create Status Message</button>
+            </form>
+            <form action="{% url 'update_profile' profile.pk %}" method="GET">
+                <button type="submit">Update Profile</button>
+            </form>
         </h4>
 
     </div>
-    
 </div>    
 
 {% endblock %}

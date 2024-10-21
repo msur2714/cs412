@@ -14,17 +14,17 @@
 
         <tr>
             <td></td>
-            <td><input type="submit" name="submit" value="Create Profile"></td>
-        </tr>
-        
-        <tr>
-            <td></td>
             <td>
-                <form action="{% url 'create_profile' %}">
+                <input type="submit" name="submit" value="Create Profile">
+
+                </form>
+                <!-- NOTE: the cancel button is its own form!!!! -->
+                <form action="{% url 'show_all_profiles' %}">
                     <input type="submit" name="Cancel" value="Cancel">
-                </form>              
+                </form>
             </td>
         </tr>
+
     </table>
 </form>
 

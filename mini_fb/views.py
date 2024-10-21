@@ -1,10 +1,12 @@
 # mini_fb/views.py
 # define the views for the mini_fb app
 
+from django.forms.models import BaseModelForm
+from django.http import HttpResponse
 from django.shortcuts import render
 
 # Create your views here.
-from django.views.generic import ListView, DetailView, CreateView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from .models import *
 from .forms import * #import the forms (e.g. CreateProfileForm)
 from typing import Any
@@ -53,8 +55,53 @@ class CreateStatusMessageView(CreateView):
            before saving data to the database.'''
         profile = Profile.objects.get(pk=self.kwargs['pk'])
         form.instance.profile = profile 
+        
+        # Save the status message
+        sm = form.save()
+
+        # Handle file uploads (if any)
+        files = self.request.FILES.getlist('files')  # Get list of uploaded files
+
+        for file in files:
+            # Create an Image object for each file
+            image = Image(image_file=file, status_message=sm)
+            image.save()
+
         return super().form_valid(form)
     
     def get_success_url(self):
         '''Return the URL to redirect to on success.'''
         return reverse('show_profile', kwargs={'pk': self.kwargs['pk']})
+    
+class UpdateProfileView(UpdateView):
+    '''A view to update the Profile details.'''
+    
+    model = Profile
+    form_class = UpdateProfileForm
+    template_name = 'mini_fb/update_profile_form.html'
+
+    def get_success_url(self):
+        '''Redirect back to the profile page after updating.'''
+        return reverse('show_profile', kwargs={'pk': self.object.pk})
+
+class DeleteStatusMessageView(DeleteView):
+    '''A view to delete a StatusMessage.'''
+    
+    model = StatusMessage
+    template_name = 'mini_fb/delete_status_form.html'
+    context_object_name = 'status_message'
+
+    def get_success_url(self):
+        '''Redirect to the profile page after a successful delete.'''
+        return reverse('show_profile', kwargs={'pk': self.object.profile.pk})
+    
+class UpdateStatusMessageView(UpdateView):
+    '''A view to update a StatusMessage.'''
+
+    model = StatusMessage
+    form_class = CreateStatusMessageForm
+    template_name = 'mini_fb/update_status_form.html'
+
+    def get_success_url(self):
+        '''Redirect to the profile page after a successful update.'''
+        return reverse('show_profile', kwargs={'pk': self.object.profile.pk})

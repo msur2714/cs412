@@ -1,4 +1,6 @@
 # define the views for the blog app
+from django.forms.models import BaseModelForm
+from django.http import HttpResponse
 from django.shortcuts import render
 
 # Create your views here.
@@ -88,4 +90,15 @@ class CreateCommentView(CreateView):
         form.instance.article = article 
 
         # delegate work to superclass version of this method 
+        return super().form_valid(form)
+    
+class CreateArticleView(CreateView): 
+    '''A view class to create a new Article instance.'''
+
+    form_class = CreateArticleForm
+    template_name = 'blog/create_article_form.html'
+
+    def form_valid(self, form):
+        '''This method is called as part of the form processing.'''
+        print(f'CreateArticleView.form_valid(): form.cleaned_data={form.cleaned_data}')
         return super().form_valid(form)
