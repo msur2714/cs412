@@ -10,6 +10,7 @@ from .forms import * #import the forms (e.g. CreateCommentForm)
 from django.urls import reverse
 from typing import Any
 import random
+from django.contrib.auth.mixins import LoginRequiredMixin 
 
 # class-based view 
 class ShowAllView(ListView):
@@ -18,6 +19,13 @@ class ShowAllView(ListView):
     model = Article #the model to display 
     template_name = 'blog/show_all.html'
     context_object_name = 'articles' # this is the context variable to use on the template
+
+    def dispatch(self, *args, **kwargs):
+        '''implement this method to add some debug tracing'''
+
+        print(f"ShowAllView.dispatch; self.request.user={self.request.user}")
+        # let the s
+        return super().dispatch(*args, **kwargs)
 
 class RandomArticleView(DetailView):
     '''Display one Article selected at Random'''
@@ -92,13 +100,26 @@ class CreateCommentView(CreateView):
         # delegate work to superclass version of this method 
         return super().form_valid(form)
     
-class CreateArticleView(CreateView): 
+class CreateArticleView(LoginRequiredMixin, CreateView): 
     '''A view class to create a new Article instance.'''
 
     form_class = CreateArticleForm
     template_name = 'blog/create_article_form.html'
+    
+    def get_login_url(self):
+        '''return the URL of the Login page'''
 
+        return reverse('login')
+    
     def form_valid(self, form):
         '''This method is called as part of the form processing.'''
         print(f'CreateArticleView.form_valid(): form.cleaned_data={form.cleaned_data}')
+
+        # find the user who is logged in 
+        user = self.request.user 
+
+        # attach that user as a FK to the new Article instance 
+        form.instance.user = user 
+
+        # let the superclass do the real work 
         return super().form_valid(form)

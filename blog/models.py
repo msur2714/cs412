@@ -3,11 +3,15 @@
 
 from django.db import models
 from django.urls import reverse
+from django.contrib.auth.models import User
 
 # Create your models here.
 
 class Article(models.Model): 
     ''''Encapsulate the idea of one Article by some author.'''
+
+    # Every Article has one User:
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     # data attributes of an Article:
     title = models.TextField(blank=False)

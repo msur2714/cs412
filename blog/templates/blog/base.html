@@ -11,10 +11,35 @@ A template with common HTML code that will be re-used by all of the other templa
     <body>
         <nav>
             <ul>
+                <!-- These URLs do not depend on which user is logged in -->
                 <li><a href="{% url 'show_all' %}">Show All</a></li>
                 <li><a href="{% url 'random' %}">Random</a></li>
+                
+                <!-- This URL requires a logged in user -->
+                {% if request.user.is_authenticated %}
                 <li><a href="{% url 'create_article' %}">Create</a></li>
+                <li><a href="{% url 'login' %}">Login</a></li>
+                {% else %}
+
+                <!-- This URL should show when not logged -->
+                <!-- <li><a href="{% url 'login' %}">Login</a></li> -->
+                <form action="{% url 'logout' %}" method="POST">
+                    {% csrf_token %}
+                    <input type="submit" value="Logout">
+                </form>
+                {% endif %}
+
             </ul>
+
+            <p>
+                <!-- request is the HTTP request object 
+                     request.user is the Django -->
+                {% if request.user.is_authenticated %}
+                {{request.user}} is logged in
+                {% else %}
+                Not logged in.
+                {% endif %}
+            </p>
         </nav>
 
         {% block content %}
