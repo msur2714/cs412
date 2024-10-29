@@ -2,6 +2,8 @@
 # Define the data objects for our application 
 
 from django.db import models
+from django.db.models import Q  # Import Q for complex queries
+
 
 # Create your models here.
 
@@ -29,6 +31,44 @@ class Profile(models.Model):
 
     def get_absolute_url(self):
         return reverse('profile', kwargs={'pk': self.pk})  
+    
+    def get_friends(self):
+        '''Return all Friend relationships on each profile'''
+        friends_as_profile1 = Friend.objects.filter(profile1=self)
+        friends_as_profile2 = Friend.objects.filter(profile2=self)
+        
+        friends_profiles = [friend.profile2 for friend in friends_as_profile1] + [friend.profile1 for friend in friends_as_profile2]
+        
+        return friends_profiles
+    
+    def add_friend(self, other):
+        if self == other:
+            return  
+
+        existing_friendship = Friend.objects.filter(
+            models.Q(profile1=self, profile2=other) | 
+            models.Q(profile1=other, profile2=self)
+        ).exists()
+
+        if not existing_friendship:
+            Friend.objects.create(profile1=self, profile2=other)
+    
+    def get_friend_suggestions(self):
+        # Retrieve all profiles that are not already friends and exclude the profile itself
+        current_friends = set(self.get_friends())
+        return Profile.objects.exclude(id__in=[friend.id for friend in current_friends]).exclude(id=self.id)
+
+    def get_news_feed(self):
+        # Get status messages for self
+        self_statuses = StatusMessage.objects.filter(profile=self)
+        
+        # Get status messages for friends
+        friends = self.get_friends()
+        friends_statuses = StatusMessage.objects.filter(profile__in=friends)
+
+        # Combine and order the messages by timestamp, most recent first
+        all_statuses = (self_statuses | friends_statuses).order_by('-timestamp')
+        return all_statuses
     
     
 class StatusMessage(models.Model): 
@@ -60,3 +100,15 @@ class Image(models.Model):
     status_message = models.ForeignKey(StatusMessage, on_delete=models.CASCADE)
     upload_timestamp = models.DateTimeField(auto_now=True)
 
+class Friend(models.Model):
+    '''Create Friends data model  which encapsulates the idea of 
+       an edge connecting two nodes within the social network 
+        
+        Data attributes: profile1, profile2, timestamp'''
+    
+    profile1 = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name="profile1")
+    profile2 = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name="profile2")
+    timestamp = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.profile1} & {self.profile2}"
