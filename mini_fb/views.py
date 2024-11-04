@@ -126,6 +126,11 @@ class UpdateProfileView(UpdateView):
     form_class = UpdateProfileForm
     template_name = 'mini_fb/update_profile_form.html'
 
+    def get_object(self):
+        # Retrieve the Profile associated with the logged-in user
+        return get_object_or_404(Profile, user=self.request.user)
+
+
     def get_success_url(self):
         '''Redirect back to the profile page after updating.'''
         return reverse('show_profile', kwargs={'pk': self.object.pk})
