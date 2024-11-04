@@ -3,7 +3,7 @@
 
 from django.forms.models import BaseModelForm
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 
 # Create your views here.
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, View
@@ -29,6 +29,26 @@ class ShowProfilePageView(DetailView):
     model = Profile
     template_name = 'mini_fb/show_profile.html'
     context_object_name = 'profile' 
+
+    def get_object(self):
+        return get_object_or_404(Profile, pk=self.kwargs['pk'])  # Fetch the profile by pk
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        profile = self.get_object()
+        
+        # Check if the logged-in user is the owner of the profile
+        if self.request.user.is_authenticated and profile.user == self.request.user:
+            context['friend_suggestions'] = profile.get_friend_suggestions()
+            context['news_feed'] = profile.get_news_feed()
+        else:
+            context['friend_suggestions'] = None  # Hide friend suggestions
+            context['news_feed'] = None  # Hide news feed
+
+        return context
+
+    def get_success_url(self):
+        return reverse('profile_detail', kwargs={'pk': self.object.pk})  # Redirect to the profile detail page
 
 class CreateProfileView(CreateView):
     form_class = CreateProfileForm
@@ -59,8 +79,6 @@ class CreateProfileView(CreateView):
         context['user_form'] = UserCreationForm()  # Add UserCreationForm to context
         return context
 
-    
-
 class CreateStatusMessageView(CreateView):
     '''A view to create a Status Message on an Profile.
        on GET: send back the form to display 
@@ -68,6 +86,9 @@ class CreateStatusMessageView(CreateView):
     
     form_class = CreateStatusMessageForm
     template_name = 'mini_fb/create_status_form.html'
+
+    def get_object(self):
+        return get_object_or_404(Profile, user=self.request.user)
 
     def get_context_data(self, **kwargs: Any):
         context = super().get_context_data(**kwargs)
@@ -151,10 +172,17 @@ class ShowFriendSuggestionsView(DetailView):
     model = Profile
     template_name = 'mini_fb/friend_suggestions.html'
 
+    def get_object(self):
+        # Get the profile for the logged-in user.
+        # This assumes each user has one profile.
+        profile = get_object_or_404(Profile, user=self.request.user)
+        return profile
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         profile = self.get_object()
         context['friend_suggestions'] = profile.get_friend_suggestions()
+        context['profile'] = profile
         return context
 
 class ShowNewsFeedView(DetailView):
@@ -162,6 +190,8 @@ class ShowNewsFeedView(DetailView):
     template_name = 'mini_fb/news_feed.html'
     context_object_name = 'profile'
 
+    def get_object(self):
+        return get_object_or_404(Profile, user=self.request.user)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

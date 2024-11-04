@@ -16,7 +16,7 @@
 
             {% if user.is_authenticated %}
                 {% if user == profile.user %}
-                    <p class="back-link"><a href="{% url 'add_friend' pk=profile.pk other_pk=suggestion.pk %}">Add Friend</a></p> 
+                    <p class="back-link"><a href="{% url 'add_friend' other_pk=suggestion.pk %}">Add Friend</a></p> 
                 {% endif %}
             {% endif %}
         </div>

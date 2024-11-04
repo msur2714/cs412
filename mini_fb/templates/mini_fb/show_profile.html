@@ -58,14 +58,13 @@
                     <form action="{% url 'create_status' profile.pk %}" method="GET">
                         <button type="submit">Create Status Message</button>
                     </form>
-                    <form action="{% url 'update_profile' profile.pk %}" method="GET">
+                    <form action="{% url 'update_profile' %}" method="GET">
                         <button type="submit">Update Profile</button>
                     </form>
                 </h4>
             {% endif %}
         {% endif %}
         
-
         
         <!-- Friends Section -->
         <h3>Friends</h3>
@@ -81,12 +80,12 @@
             {% endfor %}                
         </div>
         
-
-        <p class="back-link"><a href="{% url 'friend_suggestions' profile.pk %}">See Friend Suggestions</a></p>
-
-
-    <p class="back-link"><a href="{% url 'news_feed' profile.pk %}">News Feed</a></p>
-
+        {% if user.is_authenticated %}
+            {% if user == profile.user %}
+                <p class="back-link"><a href="{% url 'friend_suggestions' %}">See Friend Suggestions</a></p>
+                <p class="back-link"><a href="{% url 'news_feed' %}">News Feed</a></p>
+            {% endif %}
+        {% endif %}
        
     </div>
 </div>    
