@@ -2,7 +2,7 @@
 # Define the data objects for our application 
 
 from django.db import models
-from django.db.models import Q  # Import Q for complex queries
+from django.contrib.auth.models import User
 
 
 # Create your models here.
@@ -13,6 +13,9 @@ class Profile(models.Model):
         
         Data attributes: first name, last name, city, email 
                          address, and a profile image url.'''
+    
+    # Every Profile has one User:
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     first_name = models.TextField(blank=False)
     last_name = models.TextField(blank=False)

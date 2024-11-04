@@ -13,8 +13,14 @@
         <div class="mini-profile"> 
             <img src="{{ suggestion.image_url }}" alt="{{ suggestion.first_name}} {{suggestion.last_name}}'s image" style="width: 200px; height: auto;">
             <h3><a href="{% url 'show_profile' suggestion.pk %}">{{ suggestion.first_name }} {{ suggestion.last_name }}</a></h1>
-            <p class="back-link"><a href="{% url 'add_friend' pk=profile.pk other_pk=suggestion.pk %}">Add Friend</a></p>    
+
+            {% if user.is_authenticated %}
+                {% if user == profile.user %}
+                    <p class="back-link"><a href="{% url 'add_friend' pk=profile.pk other_pk=suggestion.pk %}">Add Friend</a></p> 
+                {% endif %}
+            {% endif %}
         </div>
+    
     {% empty %}
         <li>No friends to show.</li>
     {% endfor %}                

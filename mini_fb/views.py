@@ -12,6 +12,11 @@ from .forms import * #import the forms (e.g. CreateProfileForm)
 from typing import Any
 from django.urls import reverse
 from django.shortcuts import redirect
+from django.contrib.auth.mixins import LoginRequiredMixin 
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User 
+from django.contrib.auth import login
+
 
 class ShowAllView(ListView):
     '''The view to show all Profiles'''
@@ -30,11 +35,31 @@ class CreateProfileView(CreateView):
     template_name = 'mini_fb/create_profile_form.html'
 
     def form_valid(self, form):
-        profile = form.save()
-        return super().form_valid(form)
+        # Handle UserCreationForm submission
+        user_form = UserCreationForm(self.request.POST)
+        
+        if user_form.is_valid():
+            user = user_form.save()  # Create and save the user
+            login(self.request, user)  # Log the user in
+            
+            # Now save the profile and associate it with the user
+            profile = form.save(commit=False)  # Create profile but don't save yet
+            profile.user = user  # Attach the user to the profile
+            profile.save()  # Now save the profile
+            
+            return super().form_valid(form)  # Proceed to the success URL
+        else:
+            return self.form_invalid(form)  # If UserCreationForm is invalid
     
     def get_success_url(self):
         return reverse('show_profile', kwargs={'pk': self.object.pk})
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['user_form'] = UserCreationForm()  # Add UserCreationForm to context
+        return context
+
+    
 
 class CreateStatusMessageView(CreateView):
     '''A view to create a Status Message on an Profile.

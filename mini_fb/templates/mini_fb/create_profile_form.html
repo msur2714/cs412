@@ -9,6 +9,12 @@
 <form method="POST"> 
     {% csrf_token %}
 
+    <!-- UserCreation form fields -->
+    <table>
+        {{user_form.as_table}} 
+    </table>
+
+    <!-- Profile form fields -->
     <table>
         {{form.as_table}}
 

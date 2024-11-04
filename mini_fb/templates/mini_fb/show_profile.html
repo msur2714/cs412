@@ -52,15 +52,19 @@
         {% endif %}
         
         
-
-        <h4>
-            <form action="{% url 'create_status' profile.pk %}" method="GET">
-                <button type="submit">Create Status Message</button>
-            </form>
-            <form action="{% url 'update_profile' profile.pk %}" method="GET">
-                <button type="submit">Update Profile</button>
-            </form>
-        </h4>
+        {% if user.is_authenticated %}
+            {% if user == profile.user %}
+                <h4>
+                    <form action="{% url 'create_status' profile.pk %}" method="GET">
+                        <button type="submit">Create Status Message</button>
+                    </form>
+                    <form action="{% url 'update_profile' profile.pk %}" method="GET">
+                        <button type="submit">Update Profile</button>
+                    </form>
+                </h4>
+            {% endif %}
+        {% endif %}
+        
 
         
         <!-- Friends Section -->

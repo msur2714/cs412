@@ -1,6 +1,6 @@
 # define the views for the blog app
 from django.forms.models import BaseModelForm
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpRequest
 from django.shortcuts import render
 
 # Create your views here.
@@ -11,6 +11,10 @@ from django.urls import reverse
 from typing import Any
 import random
 from django.contrib.auth.mixins import LoginRequiredMixin 
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User 
+from django.contrib.auth import login
+
 
 # class-based view 
 class ShowAllView(ListView):
@@ -123,3 +127,40 @@ class CreateArticleView(LoginRequiredMixin, CreateView):
 
         # let the superclass do the real work 
         return super().form_valid(form)
+
+class RegistrationView(CreateView):
+    '''Handle registration of new users.'''
+
+    template_name = 'blog/register.html'  
+    form_class = UserCreationForm  # built-in from django.contrib.auth.forms
+
+    def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        '''Handle the User creation form submission'''
+
+        if self.request.POST:
+            # if we received and HTTP POST, we handle it 
+            print(f"RegistrationView.dispatch: self.request.POST={self.request.POST}")
+
+            # reconstruct the UserCreatForm form the POST data 
+            form = UserCreationForm(self.request.POST)
+
+            if not form.is_valid():
+                print(f"form.errors = {form.errors}")
+
+                return super().dispatch(request, *args, **kwargs)
+
+            # save the form which creates a new User 
+            user = form.save()  #this will commit the insert to the database
+            print(f"RegistrationView.dispatch: created user {user}")
+            
+            # log the User in 
+            login(self.request, user)
+            print(f"RegistrationView.dispatch: {user} is logged in")
+
+            # note for mini_fb: attach the FK user to the Profile form instance 
+
+            # RETURN a response: 
+            return redirect(reverse('show_all'))
+
+        # let CreateView.dispatch handle the HTTP GET Request
+        return super().dispatch(request, *args, **kwargs)
