@@ -62,14 +62,13 @@ class CreateProfileView(CreateView):
             user = user_form.save()  # Create and save the user
             login(self.request, user)  # Log the user in
             
-            # Now save the profile and associate it with the user
-            profile = form.save(commit=False)  # Create profile but don't save yet
+            profile = form.save(commit=False)  
             profile.user = user  # Attach the user to the profile
-            profile.save()  # Now save the profile
+            profile.save()  
             
-            return super().form_valid(form)  # Proceed to the success URL
+            return super().form_valid(form) 
         else:
-            return self.form_invalid(form)  # If UserCreationForm is invalid
+            return self.form_invalid(form)  
     
     def get_success_url(self):
         return reverse('show_profile', kwargs={'pk': self.object.pk})
