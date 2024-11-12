@@ -100,7 +100,7 @@ class VoterGraphView(ListView):
             title="Voter Distribution by Year of Birth"
         )
 
-        # Party affiliation distribution graph
+        # Pie Graph - Party affiliation distribution 
         party_affiliations = queryset.values('party_affiliation')
         party_count = {}
         for party in party_affiliations:
@@ -112,7 +112,7 @@ class VoterGraphView(ListView):
             title="Voter Distribution by Party Affiliation"
         )
 
-        # Election participation graph
+        # Bar graph - Election participation graph
         election_participation = {
             '2020': queryset.filter(v20state=True).count(),
             '2021': queryset.filter(v21town=True).count(),
