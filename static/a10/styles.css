@@ -4,32 +4,32 @@ body {
     line-height: 1.6;
     margin: 0;
     padding: 0;
-    background-color: #f4f7fb; /* Light background for a clean look */
+    background-color: #f4f7fb; 
 }
 
 h2, h3 {
-    color: #2c3e50; /* Dark gray for headings */
+    color: #2c3e50;
 }
 
 /* Header and Navigation */
 header {
-    background-color: #2d3e50; /* Deep blue background for the header */
-    color: #ecf0f1; /* Light text for contrast */
+    background-color: #2d3e50;
+    color: #ecf0f1;
     padding: 15px 0;
     text-align: center;
 }
 
 nav a {
-    color: #ecf0f1; /* Light text */
+    color: #ecf0f1; 
     text-decoration: none;
     padding: 10px 20px;
     margin: 0 10px;
-    background-color: #34495e; /* Slightly lighter blue for links */
+    background-color: #34495e; 
     border-radius: 5px;
 }
 
 nav a:hover {
-    background-color: #1abc9c; /* Fresh green on hover */
+    background-color: #1abc9c; 
 }
 
 /* Main Content */
@@ -48,16 +48,16 @@ table {
 table th, table td {
     padding: 10px;
     text-align: left;
-    border-bottom: 1px solid #bdc3c7; /* Soft gray borders */
+    border-bottom: 1px solid #bdc3c7; 
 }
 
 table th {
-    background-color: #2980b9; /* Bright blue header for the table */
+    background-color: #2980b9;
     color: #fff;
 }
 
 table tr:hover {
-    background-color: #ecf0f1; /* Light gray background on hover */
+    background-color: #ecf0f1;
 }
 
 /* Pagination */
@@ -75,17 +75,17 @@ table tr:hover {
 .pagination a {
     text-decoration: none;
     padding: 8px 15px;
-    background-color: #2980b9; /* Matching pagination button color */
+    background-color: #2980b9; 
     color: #fff;
     border-radius: 5px;
 }
 
 .pagination a:hover {
-    background-color: #3498db; /* Lighter blue on hover */
+    background-color: #3498db; 
 }
 
 .pagination .current-page {
-    background-color: #e74c3c; /* Red for current page */
+    background-color: #e74c3c; 
 }
 
 /* Search Form */
@@ -108,7 +108,7 @@ form select, form input[type="text"] {
 }
 
 form input[type="submit"] {
-    background-color: #27ae60; /* Green submit button */
+    background-color: #27ae60; 
     color: #fff;
     padding: 10px 20px;
     border: none;
@@ -117,7 +117,7 @@ form input[type="submit"] {
 }
 
 form input[type="submit"]:hover {
-    background-color: #2ecc71; /* Light green on hover */
+    background-color: #2ecc71; 
 }
 
 /* Voter Details */
@@ -131,7 +131,7 @@ form input[type="submit"]:hover {
 }
 
 .voter-details a {
-    color: #2980b9; /* Matching link color */
+    color: #2980b9; 
     text-decoration: none;
 }
 
@@ -147,7 +147,7 @@ form {
     padding: 20px;
     border: 1px solid #ddd;
     border-radius: 8px;
-    background-color: #ecf0f1; /* Light gray background for forms */
+    background-color: #ecf0f1;
 }
 
 /* Header styling */
@@ -170,7 +170,7 @@ th {
     text-align: left;
     font-weight: bold;
     padding: 10px;
-    background-color: #3498db; /* Lighter blue for headers */
+    background-color: #3498db; 
     color: white;
 }
 
@@ -201,7 +201,7 @@ tr {
 button {
     padding: 12px 20px;
     font-size: 16px;
-    background-color: #e74c3c; /* Red button for submit */
+    background-color: #e74c3c; 
     color: white;
     border: none;
     border-radius: 5px;
@@ -211,22 +211,5 @@ button {
 }
 
 button:hover {
-    background-color: #c0392b; /* Darker red on hover */
-}
-
-/* Styling for mobile responsiveness */
-@media (max-width: 768px) {
-    table, th, td {
-        display: block;
-        width: 100%;
-    }
-    
-    th, td {
-        text-align: right;
-        padding: 10px 0;
-    }
-    
-    select {
-        width: 100%;
-    }
+    background-color: #c0392b;
 }
