@@ -2,20 +2,10 @@ from django.shortcuts import render
 
 # Create your views here.
 
-from django.shortcuts import render
 from django.views.generic import ListView, DetailView
 from .models import Voter
-from django.db.models import Q
-from django.db import models
-from django import forms
 import plotly.express as px
-from django.db.models import Count
-import math
-import plotly
-import plotly.graph_objs as go
 from datetime import datetime
-
-
 
 class VoterListView(ListView):
     model = Voter
@@ -37,11 +27,9 @@ class VoterListView(ListView):
         if party:
             queryset = queryset.filter(party_affiliation=party)
         if min_dob:
-            # Convert to date format and compare year
             min_dob_date = datetime.strptime(min_dob, '%Y').date()
             queryset = queryset.filter(date_of_birth__gte=min_dob_date)
         if max_dob:
-            # Convert to date format and compare year
             max_dob_date = datetime.strptime(max_dob, '%Y').date()
         if score:
             queryset = queryset.filter(voter_score=score)
@@ -56,10 +44,6 @@ class VoterDetailView(DetailView):
     model = Voter
     template_name = 'voter_analytics/voter_detail.html'
     context_object_name = 'voter'
-
-import plotly.express as px
-from django.shortcuts import render
-from .models import Voter
 
 class VoterGraphView(ListView):
     model = Voter
@@ -85,27 +69,30 @@ class VoterGraphView(ListView):
         if max_dob:
             # Convert to date format and compare year
             max_dob_date = datetime.strptime(max_dob, '%Y').date()
+            queryset = queryset.filter(date_of_birth__lte=max_dob_date)
         if score:
             queryset = queryset.filter(voter_score=score)
         if voted_in_2020 is not None:
-            queryset = queryset.filter(voted_in_2020=v20state)
+            queryset = queryset.filter(v20state=voted_in_2020)
         if voted_in_2022 is not None:
-            queryset = queryset.filter(voted_in_2022=v22general)
+            queryset = queryset.filter(v22general=voted_in_2022)
 
         return queryset
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        # Example graph: Voter Distribution by Year of Birth (Histogram)
-        birth_years = Voter.objects.all().values('date_of_birth__year')
-        birth_year_count = {year: 0 for year in range(1900, 2025)}  # Range of years to consider
+        queryset = self.get_queryset()
+
+        # Birth year distribution graph
+        birth_years = queryset.values('date_of_birth__year')
+        birth_year_count = {year: 0 for year in range(1900, 2025)} 
         
         # Count occurrences of each birth year
         for voter in birth_years:
             birth_year_count[voter['date_of_birth__year']] += 1
         
-        # Create the histogram graph for Birth Year Distribution
+        # Histogram - Birth Year Distribution
         birth_years_graph = px.bar(
             x=list(birth_year_count.keys()),
             y=list(birth_year_count.values()),
@@ -113,8 +100,8 @@ class VoterGraphView(ListView):
             title="Voter Distribution by Year of Birth"
         )
 
-        # Example graph: Voter Distribution by Party Affiliation (Pie chart)
-        party_affiliations = Voter.objects.values('party_affiliation')
+        # Party affiliation distribution graph
+        party_affiliations = queryset.values('party_affiliation')
         party_count = {}
         for party in party_affiliations:
             party_count[party['party_affiliation']] = party_count.get(party['party_affiliation'], 0) + 1
@@ -125,13 +112,13 @@ class VoterGraphView(ListView):
             title="Voter Distribution by Party Affiliation"
         )
 
-        # Example graph: Voter Participation in Elections (Histogram)
+        # Election participation graph
         election_participation = {
-            '2020': Voter.objects.filter(v20state=True).count(),
-            '2021': Voter.objects.filter(v21town=True).count(),
-            '2021 Primary': Voter.objects.filter(v21primary=True).count(),
-            '2022 General': Voter.objects.filter(v22general=True).count(),
-            '2023 Town': Voter.objects.filter(v23town=True).count(),
+            '2020': queryset.filter(v20state=True).count(),
+            '2021': queryset.filter(v21town=True).count(),
+            '2021 Primary': queryset.filter(v21primary=True).count(),
+            '2022 General': queryset.filter(v22general=True).count(),
+            '2023 Town': queryset.filter(v23town=True).count(),
         }
 
         election_graph = px.bar(
@@ -141,10 +128,8 @@ class VoterGraphView(ListView):
             title="Voter Participation in Elections"
         )
 
-        # Add the graphs to the context dictionary
         context['birth_years_graph'] = birth_years_graph.to_html(full_html=False)
         context['party_graph'] = party_graph.to_html(full_html=False)
         context['election_graph'] = election_graph.to_html(full_html=False)
 
         return context
-

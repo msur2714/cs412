@@ -322,7 +322,14 @@
         <tr>
             <td colspan="2">
                 <input type="submit" value="Filter">
-            </td>
+            </td>        
         </tr>
+
     </table>
+
+    <!-- NOTE: the cancel button is its own form!!!! -->
+    <form action="{% url 'graphs' %}">
+        <input type="submit" name="Cancel" value="Cancel">
+    </form>
 </form>
+
