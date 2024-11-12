@@ -1,0 +1,22 @@
+<!-- voter_analytics/templates/voter_analytics/voters_detail.html -->
+{% extends 'voter_analytics/base.html' %}
+
+{% block content %}
+
+<a href="{% url 'home' %}">Back to Homepage</a>
+
+<h2>Voter Details: {{ voter.first_name }} {{ voter.last_name }}</h2>
+
+<p><strong>First Name:</strong> {{ voter.first_name }}</p>
+<p><strong>Last Name:</strong> {{ voter.last_name }}</p>
+<p><strong>Street Address:</strong> {{ voter.street_number }} {{ voter.street_name }} {{ voter.apartment_number }} {{ voter.zip_code }} </p>
+<p><strong>Date of Birth:</strong> {{ voter.date_of_birth }}</p>
+<p><strong>Party Affiliation:</strong> {{ voter.party_affiliation }}</p>
+<p><strong>Voter Score:</strong> {{ voter.voter_score }}</p>
+<p><strong>Registration Date:</strong> {{ voter.date_of_registration }}</p>
+<p><strong>Voted in 2020:</strong> {{ voter.v20state }}</p>
+<p><strong>Voted in 2022:</strong> {{ voter.v22general }}</p>
+
+<a href="https://www.google.com/maps?q={{ voter.street_number }} {{ voter.street_name }} {{ voter.apartment_number }} {{ voter.zip_code }} " target="_blank">View Address on Google Maps</a>
+
+{% endblock %}

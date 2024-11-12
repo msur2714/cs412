@@ -1,0 +1,232 @@
+/* General Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f7fb; /* Light background for a clean look */
+}
+
+h2, h3 {
+    color: #2c3e50; /* Dark gray for headings */
+}
+
+/* Header and Navigation */
+header {
+    background-color: #2d3e50; /* Deep blue background for the header */
+    color: #ecf0f1; /* Light text for contrast */
+    padding: 15px 0;
+    text-align: center;
+}
+
+nav a {
+    color: #ecf0f1; /* Light text */
+    text-decoration: none;
+    padding: 10px 20px;
+    margin: 0 10px;
+    background-color: #34495e; /* Slightly lighter blue for links */
+    border-radius: 5px;
+}
+
+nav a:hover {
+    background-color: #1abc9c; /* Fresh green on hover */
+}
+
+/* Main Content */
+.container {
+    width: 80%;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+table th, table td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #bdc3c7; /* Soft gray borders */
+}
+
+table th {
+    background-color: #2980b9; /* Bright blue header for the table */
+    color: #fff;
+}
+
+table tr:hover {
+    background-color: #ecf0f1; /* Light gray background on hover */
+}
+
+/* Pagination */
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.pagination li {
+    list-style-type: none;
+    margin: 0 5px;
+}
+
+.pagination a {
+    text-decoration: none;
+    padding: 8px 15px;
+    background-color: #2980b9; /* Matching pagination button color */
+    color: #fff;
+    border-radius: 5px;
+}
+
+.pagination a:hover {
+    background-color: #3498db; /* Lighter blue on hover */
+}
+
+.pagination .current-page {
+    background-color: #e74c3c; /* Red for current page */
+}
+
+/* Search Form */
+form {
+    margin-bottom: 20px;
+}
+
+form table {
+    width: 100%;
+    margin-top: 10px;
+}
+
+form select, form input[type="text"] {
+    padding: 10px;
+    width: 100%;
+    margin: 5px 0;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+}
+
+form input[type="submit"] {
+    background-color: #27ae60; /* Green submit button */
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+form input[type="submit"]:hover {
+    background-color: #2ecc71; /* Light green on hover */
+}
+
+/* Voter Details */
+.voter-details {
+    margin-top: 20px;
+}
+
+.voter-details p {
+    font-size: 1.1em;
+    margin: 10px 0;
+}
+
+.voter-details a {
+    color: #2980b9; /* Matching link color */
+    text-decoration: none;
+}
+
+.voter-details a:hover {
+    text-decoration: underline;
+}
+
+/* Style for the search form container */
+form {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #ecf0f1; /* Light gray background for forms */
+}
+
+/* Header styling */
+h3 {
+    text-align: center;
+    font-family: 'Arial', sans-serif;
+    color: #2c3e50;
+    margin-bottom: 20px;
+}
+
+/* Table styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+/* Table header styling */
+th {
+    text-align: left;
+    font-weight: bold;
+    padding: 10px;
+    background-color: #3498db; /* Lighter blue for headers */
+    color: white;
+}
+
+/* Table cell styling */
+td {
+    padding: 10px;
+    border: 1px solid #bdc3c7;
+    text-align: left;
+}
+
+/* Select input styling */
+select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #bdc3c7;
+    border-radius: 5px;
+    font-size: 14px;
+    color: #34495e;
+    background-color: #fff;
+}
+
+/* Form row styling */
+tr {
+    margin-bottom: 15px;
+}
+
+/* Button styling (submit) */
+button {
+    padding: 12px 20px;
+    font-size: 16px;
+    background-color: #e74c3c; /* Red button for submit */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 20px;
+}
+
+button:hover {
+    background-color: #c0392b; /* Darker red on hover */
+}
+
+/* Styling for mobile responsiveness */
+@media (max-width: 768px) {
+    table, th, td {
+        display: block;
+        width: 100%;
+    }
+    
+    th, td {
+        text-align: right;
+        padding: 10px 0;
+    }
+    
+    select {
+        width: 100%;
+    }
+}

@@ -1,0 +1,62 @@
+<!-- voter_analytics/templates/voter_analytics/voter.html -->
+
+{% extends 'voter_analytics/base.html' %}
+
+{% block content %}
+  <h2>Voter List</h2>
+
+  <div>
+    {% include 'voter_analytics/filter_voters.html' %}
+</div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Date of Birth</th>
+        <th>Street Address</th>
+        <th>Party Affiliation</th>
+        <th>Voter Score</th>
+        <th>Details</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for voter in voters %}
+        <tr>
+          <td>{{ voter.first_name }}</td>
+          <td>{{ voter.last_name }}</td>
+          <td>{{ voter.date_of_birth }}</td>
+          <td>{{ voter.street_number }} {{ voter.street_name }} {{ voter.apartment_number }} {{ voter.zip_code }}</td>
+          <td>{{ voter.party_affiliation }}</td>
+          <td>{{ voter.voter_score }}</td>
+          <td><a href="{% url 'voter' voter.pk %}">View Details</a></td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <!-- navigation for different pages of results -->
+  <div class="row">
+    {% if is_paginated %}
+    <ul class="pagination">
+        {% if page_obj.has_previous %}
+            <li>
+                <span><a href="?page={{ page_obj.previous_page_number }}">Previous</a></span>
+         
+            </li>
+        {% endif %}
+            <li class="">
+                <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.</span>
+            </li>
+        {% if page_obj.has_next %}
+            <li>
+                <span><a href="?page={{ page_obj.next_page_number }}">Next</a></span>
+            </li>
+        {% endif %}
+        </ul>
+    {% endif %}
+</div>
+  
+{% endblock %}
+

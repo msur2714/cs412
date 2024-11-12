@@ -61,7 +61,7 @@ class CreateProfileView(CreateView):
         if user_form.is_valid():
             user = user_form.save()  # Create and save the user
             login(self.request, user)  # Log the user in
-            
+
             profile = form.save(commit=False)  
             profile.user = user  # Attach the user to the profile
             profile.save()  

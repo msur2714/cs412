@@ -1,0 +1,22 @@
+{% extends 'voter_analytics/base.html' %}
+
+{% block content %}
+
+<div>
+    {% include 'voter_analytics/filter_graphs.html' %}
+</div>
+
+<body>
+
+    <h2>Voter Distribution by Year of Birth</h2>
+    <div>{{ birth_years_graph|safe }}</div>  <!-- Graph 1 -->
+
+    <h2>Voter Distribution by Party Affiliation</h2>
+    <div>{{ party_graph|safe }}</div>  <!-- Graph 2 -->
+
+    <h2>Voter Participation in Elections</h2>
+    <div>{{ election_graph|safe }}</div>  <!-- Graph 3 -->
+
+</body>
+
+{% endblock %}
