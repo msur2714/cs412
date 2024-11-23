@@ -1,5 +1,5 @@
 ## project/urls.py
-## description: URL patterns for the bookmark app
+## description: URL patterns for the project app
 
 from django.urls import path
 from django.conf import settings

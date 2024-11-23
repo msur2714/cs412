@@ -45,5 +45,5 @@ class Review(models.Model):
         return f"Review by {self.user.username} for {self.book.title}"
     
 
-# Create an extra model 
+# Add a USER model 
 
