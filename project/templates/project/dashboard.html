@@ -16,30 +16,36 @@
     | <a href="{% url 'currently_reading' %}" class="btn">Currently Reading</a>
     | <a href="{% url 'book_history' %}" class="btn">Book History</a>
     | <a href="{% url 'add_book' %}" class="btn">Add Book</a>
-    | <a href="{% url 'add' %}" class="btn">Add a Review</a> 
+    | <a href="{% url 'add_review' %}" class="btn">Add a Review</a> 
     | <a href="{% url 'logout' %}" class="btn">Logout</a>
     
-    <h4>Recent book reviews:</h4>
-    {% for review in reviews %}
-        <div class="review-container">
-            <h5><a href="/books/{{ review.book.id }}">{{ review.book.title }}</a></h5>
-            <p>Rating: 
-                {% for i in review.rating|range_filter %}
-                    <span>★</span>
-                {% endfor %}
-            </p>
-            <p><a href="{% url 'show_user' user.id %}">{{ user.first_name }}</a>'s Review: {{ review.review }}</p>
+    <br><br>
 
-            {% if user.id == review.user_id %}
-                <a href="{% url 'edit_review' review.id %}" class="btn">Edit</a>
+    <h2>Your Reviews</h2>
+    {% if reviews %}
+        {% for review in reviews %}
+            <div class="review-container">
+                <h4><a href="/books/{{ review.book.id }}">{{ review.book.title }}</a></h4>
+                <p>Rating: 
+                    {% for i in review.rating|range_filter %}
+                        <span>★</span>
+                    {% endfor %}
+                </p>
+                <p><a href="{% url 'show_user' review.id %}">{{ user.first_name }}</a>'s Review: {{ review.review }}</p>
 
-                <form action="{% url 'delete_review' review.id %}" method="POST" style="display:inline;">
-                    {% csrf_token %}
-                    <button type="submit" class="btn">Delete</button>
-                </form>
-            {% endif %}
-        </div>
-    {% endfor %}
+                {% if user.id == review.user_id %}
+                    <a href="{% url 'edit_review' review.id %}" class="btn">Edit</a>
+
+                    <form action="{% url 'delete_review' review.id %}" method="POST" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn">Delete</button>
+                    </form>
+                {% endif %}
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>No reviews found.</p>
+    {% endif %}
 </div>
 
 {% endblock %}

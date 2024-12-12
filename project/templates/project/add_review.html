@@ -1,0 +1,17 @@
+<!-- project/templates/project/add_review.html -->
+
+{% extends 'project/base.html' %}
+
+{% block content %}
+
+  <h2>Add Review</h2>
+
+  <form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Submit Review</button>
+  </form>
+
+  <a href="{% url 'dashboard' %}">Return to Dashboard</a>
+
+{% endblock %}

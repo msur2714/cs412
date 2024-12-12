@@ -57,19 +57,38 @@ class ImageUploadForm(forms.ModelForm):
             image_instance.save()
         return image_instance
 
-    
 class ReviewForm(forms.ModelForm):
+    # Define choices for rating (1 to 5)
+    RATING_CHOICES = [(i, str(i)) for i in range(1, 6)]
+
     class Meta:
         model = Review
         fields = ['book', 'review', 'rating']
 
     def __init__(self, *args, **kwargs):
-        user = kwargs.pop('user', None)
+        user = kwargs.pop('user', None)  # Get the user from the form context
         super().__init__(*args, **kwargs)
         if user:
-            self.fields['book'].queryset = Book.objects.filter(
-                user=user, is_read=True
-            )
+            # Filter the books to only include those that the user has read
+            self.fields['book'].queryset = Book.objects.filter(reader=user, is_read=True)
+        
+        # Use ChoiceField for rating with a range of 1 to 5
+        self.fields['rating'] = forms.ChoiceField(choices=self.RATING_CHOICES, required=True)
+
+class EditReviewForm(forms.ModelForm):
+    # Define choices for rating (1 to 5)
+    RATING_CHOICES = [(i, str(i)) for i in range(1, 6)]
+
+    class Meta:
+        model = Review
+        fields = ['review', 'rating']
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)  # Get the user from the form context
+        super().__init__(*args, **kwargs)
+        if user:
+            # Use ChoiceField for rating with a range of 1 to 5
+            self.fields['rating'] = forms.ChoiceField(choices=self.RATING_CHOICES, required=True)
 
 class BookForm(forms.ModelForm):
     class Meta:
