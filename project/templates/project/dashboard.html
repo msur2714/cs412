@@ -25,7 +25,7 @@
     {% if reviews %}
         {% for review in reviews %}
             <div class="review-container">
-                <h4><a href="/books/{{ review.book.id }}">{{ review.book.title }}</a></h4>
+                <h4>{{ review.book.title }}</h4>
                 <p>Rating: 
                     {% for i in review.rating|range_filter %}
                         <span>★</span>
@@ -33,19 +33,19 @@
                 </p>
                 <p><a href="{% url 'show_user' review.id %}">{{ user.first_name }}</a>'s Review: {{ review.review }}</p>
 
-                {% if user.id == review.user_id %}
-                    <a href="{% url 'edit_review' review.id %}" class="btn">Edit</a>
+                <a href="{% url 'edit_review' review.id %}" class="btn">Edit</a>
 
-                    <form action="{% url 'delete_review' review.id %}" method="POST" style="display:inline;">
-                        {% csrf_token %}
-                        <button type="submit" class="btn">Delete</button>
-                    </form>
-                {% endif %}
+                <form action="{% url 'delete_review' review.id %}" method="POST" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn">Delete</button>
+                </form>
             </div>
         {% endfor %}
+
     {% else %}
         <p>No reviews found.</p>
     {% endif %}
+
 </div>
 
 {% endblock %}

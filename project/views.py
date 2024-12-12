@@ -48,7 +48,6 @@ class DashboardDetailView(LoginRequiredMixin, DetailView):
             context['reviews'] = None
         return context
 
-
 class ReaderDetailView(LoginRequiredMixin, DetailView):
     '''This View displays the Reader's profile page. 
     
@@ -307,7 +306,7 @@ class DeleteReviewView(DeleteView):
     model = Review
     template_name = 'project/delete_review.html'
     success_url = reverse_lazy('dashboard') 
-    
+
     def get_queryset(self):
         """Ensure that users can only delete their own reviews."""
         return Review.objects.filter(user=self.request.user.reader)
