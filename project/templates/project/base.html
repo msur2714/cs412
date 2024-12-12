@@ -5,11 +5,12 @@ A template with common HTML code that will be re-used by all of the other templa
 
 <html>
     <head>
-        <title>Book App!</title>
+        <title>Book Tracker and Log!</title>
         <link rel="stylesheet" href="{% static 'project/styles.css' %}">
     </head>
 
     <body>
+        
         <nav>
             <ul>
                 {% if request.user.is_authenticated %}
@@ -30,6 +31,8 @@ A template with common HTML code that will be re-used by all of the other templa
                 {% endif %}
             </ul>
         </nav>
+
+        <h1>Book Tracker and Log!</h1>
 
         {% block content %}
         
