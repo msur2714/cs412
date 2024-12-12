@@ -24,6 +24,9 @@ class DashboardDetailView(LoginRequiredMixin, DetailView):
     template_name = 'project/dashboard.html'
     context_object_name = 'reader'
 
+    def get_login_url(self) -> str:
+        return reverse('login')
+
     def get_object(self, queryset=None):
         user = self.request.user
         reader, created = Reader.objects.get_or_create(user=user)
