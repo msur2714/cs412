@@ -31,7 +31,6 @@ class DashboardDetailView(LoginRequiredMixin, DetailView):
         return reverse('login')
 
     def get_object(self, queryset=None):
-        # Return the current logged-in user without needing the pk in the URL
         return self.request.user
 
     def get_context_data(self, **kwargs):
@@ -53,7 +52,6 @@ class ReaderDetailView(LoginRequiredMixin, DetailView):
         return reverse('login')
 
     def get_object(self, queryset=None):
-        # This will fetch the reader object based on user_id in the URL
         return User.objects.get(id=self.kwargs['user_id'])
 
     def get_success_url(self):
@@ -63,7 +61,7 @@ class RegistrationView(CreateView):
     '''Handle registration of new users.'''
 
     template_name = 'project/register.html'
-    form_class = CustomUserCreationForm  # Use the custom form
+    form_class = CustomUserCreationForm 
 
     def dispatch(self, request, *args, **kwargs):
         '''Handle the User creation form submission'''
@@ -99,15 +97,13 @@ class LoginView(View):
         password = request.POST['password']
         user = authenticate(request, username=username, password=password)
         if user is not None:
-            login(request, user)  # Log the user in
-            request.session['user_id'] = user.id  # Save user ID in the session
+            login(request, user)  
+            request.session['user_id'] = user.id 
             return redirect('dashboard')
         else:
             # Handle invalid credentials
             return render(request, 'project/login.html', {'error': 'Invalid username or password'})
-
-
-
+        
 # Class-based add view
 class AddView(View):
     def get(self, request):
@@ -169,7 +165,7 @@ class AddReviewView(LoginRequiredMixin, View):
             }
             return render(request, 'project/add_review.html', context)
 
-# Class-based show book view
+#show book view
 class ShowBookView(View):
     def get(self, request, book_id):
         book = get_object_or_404(Book, id=book_id)
@@ -180,7 +176,7 @@ class ShowBookView(View):
         }
         return render(request, 'project/show.html', context)
 
-# Class-based review add view
+#review add view
 class ReviewAddView(View):
     def post(self, request, book_id):
         book = get_object_or_404(Book, id=book_id)
@@ -200,22 +196,18 @@ class DeleteBookView(View):
         book.delete()
         return redirect('dashboard')
 
-
 class DeleteReviewView(View):
     def post(self, request, review_id):
         review = get_object_or_404(Review, id=review_id)
 
-        # Ensure that the user can only delete their own reviews
         if review.user == request.user:
             review.delete()
             messages.success(request, "Review deleted successfully!")
         else:
             messages.error(request, "You cannot delete this review.")
 
-        return redirect('dashboard')  # Redirect to the dashboard or any other page
+        return redirect('dashboard')  
 
-
-# Class-based logout view
 class LogoutView(View):
     def get(self, request):
         del request.session['user_id']
@@ -230,7 +222,6 @@ class EditReviewView(UpdateView):
     success_url = reverse_lazy('dashboard')
 
     def get_object(self, queryset=None):
-        # Ensure the review being edited belongs to the logged-in user
         review = super().get_object(queryset)
         if review.user != self.request.user:
             # If the review does not belong to the logged-in user, redirect to dashboard

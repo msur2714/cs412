@@ -17,7 +17,6 @@ urlpatterns = [
     path('review_add/<int:book_id>/', views.ReviewAddView.as_view(), name="review_add"),
     path('books/<int:book_id>/', views.ShowBookView.as_view(), name="show_book"),
     path('books/<int:book_id>/delete', views.DeleteBookView.as_view(), name="delete_book"),
-
     path('reviews/<int:pk>/edit/', views.EditReviewView.as_view(), name='edit_review'),
     path('review/<int:review_id>/delete/', views.DeleteReviewView.as_view(), name='delete_review'),
 
@@ -32,11 +31,9 @@ urlpatterns = [
     path('book/<int:pk>/', views.BookDetailView.as_view(), name='book_detail'),  # Book Detail URL
     path('delete_book/<int:pk>/', views.delete_book, name='delete_book'),
 
-
-
     # Authentication URLs
-    # path('login', views.LoginView.as_view(), name="login"),
-    # path('logout', views.LogoutView.as_view(), name="logout"),
+    path('login', views.LoginView.as_view(), name="login"),
+    path('logout', views.LogoutView.as_view(), name="logout"),
     path('login/', auth_views.LoginView.as_view(template_name='project/login.html'), name='login'), ## NEW
     path('logout/', auth_views.LogoutView.as_view(template_name='project/logged_out.html'), name='logout'), ## NEW
     path('register/', views.RegistrationView.as_view(), name='register')
