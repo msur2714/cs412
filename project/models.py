@@ -9,10 +9,11 @@ class Reader(models.Model):
     first_name = models.TextField(blank=False, max_length=20, null=True)
     last_name = models.TextField(blank=False, max_length=20, null=True)
     email_address = models.TextField(blank=False, null=True)
+    profile_picture = models.ImageField(upload_to='profile_pictures/', null=True, blank=True)  # Add profile picture field
+
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
-
 
 class Book(models.Model):
     """The Book model saves the books that a Reader has read."""
@@ -21,7 +22,7 @@ class Book(models.Model):
     description = models.TextField(default="No description available")
     is_read = models.BooleanField(default=False)
     is_currently_reading = models.BooleanField(default=False)
-    user = models.ForeignKey(Reader, on_delete=models.CASCADE)
+    reader = models.ForeignKey(Reader, on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.title} by {self.author}"
@@ -46,3 +47,13 @@ class Review(models.Model):
 
     def __str__(self):
         return f"Review of {self.book.title} by {self.user}"
+    
+class Image(models.Model):
+    ''''Create Image data model which encapsulates the idea 
+        of an image file (not a URL) that is stored in the 
+        Django media directory. which will model the data 
+        
+        Data attributes: image_file'''
+    
+    image_file = models.ImageField(upload_to='profile_pictures/') 
+    profile_picture = models.ForeignKey(Reader, on_delete=models.CASCADE)

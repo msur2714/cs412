@@ -4,13 +4,31 @@
 
 {% block content %}
 
-    <div class="container">
+<div class="container">
+    <hr>
+    <div style="display: flex; align-items: center; justify-content: space-between;">
+        <!-- Left Section: Profile Details -->
+        <div>
+            <h3>Name: {{ reader.first_name }} {{ reader.last_name }}</h3>
+            <p>Email: {{ reader.email_address }}</p>
+            <br>
+            <a href="{% url 'edit_profile' %}" class="btn btn-secondary">Edit Profile</a>
+        </div>
 
-        <hr>
-        
-        <h3>Name: {{ reader.first_name }} {{ reader.last_name }}</h3>
-        <p>Email: {{ reader.email }}</p>
-
+        <div style="display: flex; align-items: flex-start;">
+            <!-- Right Section: Profile Picture -->
+            <div style="margin-right: 100px;">
+                {% if reader.profile_picture %}
+                    <img src="{{ reader.profile_picture.url }}" alt="Profile Picture" 
+                         style="border-radius: 100%; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);">
+                {% else %}
+                    <div style="width: 150px; height: 150px; border-radius: 50%; background-color: #f0f0f0; 
+                                display: flex; align-items: center; justify-content: center; 
+                                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);">
+                        <p style="color: #888;">No picture</p>
+                    </div>
+                {% endif %}
+            </div>
     </div>
-
+</div>
 {% endblock %}

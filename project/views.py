@@ -10,15 +10,14 @@ from django.contrib import messages
 from django.http import HttpResponse, HttpRequest,Http404
 from django.views.generic import CreateView, DetailView, UpdateView, TemplateView, ListView, FormView
 from django.views import View
-from .models import Reader, Book, Review, User, BookLog
-from .forms import CustomUserCreationForm, ReviewForm, BookForm, BookUpdateForm, BookLogForm
+from .models import Reader, Book, Review, User, BookLog, Image
+from .forms import CustomUserCreationForm, ReviewForm, BookForm, BookUpdateForm, BookLogForm, ImageUploadForm, ReaderUpdateForm
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login 
 from typing import Any
 
 # Authentication 
 from django.contrib.auth.mixins import LoginRequiredMixin
-
 
 class DashboardDetailView(LoginRequiredMixin, DetailView):
     model = Reader
@@ -29,28 +28,43 @@ class DashboardDetailView(LoginRequiredMixin, DetailView):
         user = self.request.user
         reader, created = Reader.objects.get_or_create(user=user)
         return reader
-
+    
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        reader = self.get_object()
-        books = Book.objects.filter(user=reader)  # Updated to match the new relationship
-        reviews = Review.objects.filter(user=reader)  # Updated to match the new relationship
-        context['books'] = books
-        context['reviews'] = reviews
+        # Ensure that the user is a Reader instance
+        try:
+            reader = Reader.objects.get(user=self.request.user)
+            reviews = Review.objects.filter(user=reader)
+            context['reviews'] = reviews
+        except Reader.DoesNotExist:
+            context['reviews'] = None
         return context
-    
+
+
 class ReaderDetailView(LoginRequiredMixin, DetailView):
     model = Reader
     template_name = 'project/showuser.html'
     context_object_name = 'reader'
 
+    def get_object(self, queryset=None):
+        user = self.request.user
+        reader, created = Reader.objects.get_or_create(user=user)
+        return reader
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Ensure that the user is a Reader instance
+        try:
+            reader = Reader.objects.get(user=self.request.user)
+            reviews = Review.objects.filter(user=reader)
+            context['reviews'] = reviews
+        except Reader.DoesNotExist:
+            context['reviews'] = None
+        return context
+
     def get_login_url(self) -> str:
         return reverse('login')
-
-    def get_object(self, queryset=None):
-        # This will fetch the reader object based on user_id in the URL
-        return User.objects.get(id=self.kwargs['user_id'])
-
+    
     def get_success_url(self):
         return reverse('show_user', kwargs={'id': self.object.id})
 
@@ -207,7 +221,6 @@ class LogoutView(View):
     def get(self, request):
         del request.session['user_id']
         return redirect('/')
-    
 
 class EditReviewView(UpdateView):
     model = Review
@@ -223,14 +236,6 @@ class EditReviewView(UpdateView):
             raise PermissionDenied 
         return review
 
-class CurrentlyReadingView(ListView):
-    model = Book
-    template_name = 'project/currently_reading.html'
-    context_object_name = 'currently_reading_books'
-
-    def get_queryset(self):
-        return Book.objects.filter(user=self.request.user, is_currently_reading=True)
-
 class BookHistoryView(ListView):
     model = Book
     template_name = 'project/book_history.html'
@@ -238,13 +243,26 @@ class BookHistoryView(ListView):
 
     def get_queryset(self):
         query = self.request.GET.get('q')
+        
+        # Get the Reader instance corresponding to the authenticated user
+        reader = get_object_or_404(Reader, user=self.request.user)
+
+        # Start by filtering books based on the current user and their read status
         queryset = Book.objects.filter(
-            Q(user=self.request.user) & (Q(is_read=True) | Q(is_currently_reading=True))
+            reader=reader
         )
+
+        # Additional filtering for books that are either read or currently being read
+        queryset = queryset.filter(
+            Q(is_read=True) | Q(is_currently_reading=True)
+        )
+        
+        # If there's a query parameter, filter by title or author
         if query:
             queryset = queryset.filter(
                 Q(title__icontains=query) | Q(author__icontains=query)
             )
+        
         return queryset
     
 class BookCreateView(CreateView):
@@ -279,8 +297,12 @@ class CurrentlyReadingView(LoginRequiredMixin, TemplateView, FormView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        currently_reading_books = Book.objects.filter(user=self.request.user, is_currently_reading=True)
-        all_books = Book.objects.filter(user=self.request.user)
+        
+        # Use the Reader instance
+        reader = self.request.user.reader
+        
+        currently_reading_books = Book.objects.filter(reader=reader, is_currently_reading=True)
+        all_books = Book.objects.filter(reader=reader)
 
         # Prepare data for the chart
         labels = [book.title for book in all_books]
@@ -312,3 +334,28 @@ def delete_book(request, pk):
     book = get_object_or_404(Book, pk=pk, user=request.user)
     book.delete()
     return redirect('currently_reading')
+
+class EditProfileView(LoginRequiredMixin, UpdateView):
+    model = Reader
+    form_class = ReaderUpdateForm
+    template_name = 'project/edit_reader.html'
+
+    def get_object(self):
+        # Ensure you are returning the correct Reader instance for the logged-in user
+        return self.request.user.reader  # Assuming the user has a related Reader
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['image_form'] = ImageUploadForm(instance=self.object)  # For profile image upload
+        return context
+
+    def form_valid(self, form):
+        # Save the Reader form data
+        self.object = form.save()
+
+        # Handle image form separately if an image is uploaded
+        image_form = ImageUploadForm(self.request.POST, self.request.FILES, instance=self.object)
+        if image_form.is_valid():
+            image_form.save()  # Save the image
+
+        return redirect('show_user', user_id=self.object.user.id)  # Redirect to profile page

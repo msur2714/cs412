@@ -2,7 +2,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import Reader, Review, Book, BookLog
+from .models import Reader, Review, Book, BookLog, Image
 
 class CustomUserCreationForm(UserCreationForm):
     first_name = forms.CharField(max_length=30, required=True, help_text="Required.")
@@ -31,6 +31,32 @@ class CustomUserCreationForm(UserCreationForm):
                 email_address=user.email
             )
         return user
+
+class ReaderUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Reader
+        fields = ['first_name', 'last_name', 'email_address', 'profile_picture']  # Include profile_picture
+
+    def save(self, commit=True):
+        reader = super().save(commit=False)
+        if commit:
+            reader.save()
+        return reader
+
+class ImageUploadForm(forms.ModelForm):
+    class Meta:
+        model = Image
+        fields = ['image_file']  # Only upload the image file
+    
+    def save(self, commit=True):
+        # This method will save the image and link it to the corresponding Reader
+        image_instance = super().save(commit=False)
+        # Link the image to the correct Reader (from the current user)
+        image_instance.profile_picture = self.instance.profile_picture  # Ensure the image is linked to the reader
+        if commit:
+            image_instance.save()
+        return image_instance
+
     
 class ReviewForm(forms.ModelForm):
     class Meta:

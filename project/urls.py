@@ -2,7 +2,7 @@ from django.urls import path
 from django.conf import settings
 from django.contrib.auth import views as auth_views
 from . import views
-from .views import AddReviewView
+from django.conf.urls.static import static
 
 
 # all of the URLs that are part of this app
@@ -22,6 +22,8 @@ urlpatterns = [
 
     # Reader Profile URLs
     path('showuser/<int:user_id>/', views.ReaderDetailView.as_view(), name='show_user'),
+    path('edit_profile/', views.EditProfileView.as_view(), name='edit_profile'),
+
 
     # Book Tracker URLs
     path('currently_reading/', views.CurrentlyReadingView.as_view(), name='currently_reading'),    
@@ -39,4 +41,4 @@ urlpatterns = [
     path('register/', views.RegistrationView.as_view(), name='register')
 
 
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
