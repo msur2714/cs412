@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.urls import reverse_lazy
 from django.contrib import messages
-from django.http import HttpResponse, HttpRequest
+from django.http import HttpResponse, HttpRequest,Http404
 from django.views.generic import CreateView, DetailView, UpdateView, TemplateView, ListView, FormView
 from django.views import View
 from .models import Reader, Book, Review, User, BookLog
@@ -21,29 +21,25 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 class DashboardDetailView(LoginRequiredMixin, DetailView):
-    '''This view is for the homepage for the app once a user is logged in'''
-
-    model = Reader 
+    model = Reader
     template_name = 'project/dashboard.html'
     context_object_name = 'reader'
 
-    def get_login_url(self) -> str:
-        return reverse('login')
-
     def get_object(self, queryset=None):
-        return self.request.user
+        user = self.request.user
+        reader, created = Reader.objects.get_or_create(user=user)
+        return reader
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        books = Book.objects.filter(user=self.request.user)
-        reviews = Review.objects.filter(user=self.request.user)
+        reader = self.get_object()
+        books = Book.objects.filter(user=reader)  # Updated to match the new relationship
+        reviews = Review.objects.filter(user=reader)  # Updated to match the new relationship
         context['books'] = books
         context['reviews'] = reviews
         return context
     
 class ReaderDetailView(LoginRequiredMixin, DetailView):
-    '''A view to display each Reader's profile with their reviews'''
-    
     model = Reader
     template_name = 'project/showuser.html'
     context_object_name = 'reader'
@@ -52,6 +48,7 @@ class ReaderDetailView(LoginRequiredMixin, DetailView):
         return reverse('login')
 
     def get_object(self, queryset=None):
+        # This will fetch the reader object based on user_id in the URL
         return User.objects.get(id=self.kwargs['user_id'])
 
     def get_success_url(self):
@@ -62,6 +59,7 @@ class RegistrationView(CreateView):
 
     template_name = 'project/register.html'
     form_class = CustomUserCreationForm 
+    model = Reader 
 
     def dispatch(self, request, *args, **kwargs):
         '''Handle the User creation form submission'''
@@ -142,28 +140,25 @@ class AddReviewView(LoginRequiredMixin, View):
     def add_review(request):
         query = request.GET.get('q')
         
-        for book in all_books:
-            book_log = BookLog.objects.filter(book=book).first()
-        
-            if query:
-                books = books.filter(Q(title__icontains=query) | Q(author__icontains=query))
+        if query:
+            books = books.filter(Q(title__icontains=query) | Q(author__icontains=query))
 
-            if request.method == 'POST':
-                form = ReviewForm(request.POST, user=request.user)
-                if form.is_valid():
-                    review = form.save(commit=False)
-                    review.user = request.user.reader  # Assuming each User has one Reader
-                    review.save()
-                    return redirect('book_history')  # Redirect to a relevant page after submission
-            else:
-                form = ReviewForm(user=request.user)
+        if request.method == 'POST':
+            form = ReviewForm(request.POST, user=request.user)
+            if form.is_valid():
+                review = form.save(commit=False)
+                review.user = request.user.reader  # Assuming each User has one Reader
+                review.save()
+                return redirect('book_history')  # Redirect to a relevant page after submission
+        else:
+            form = ReviewForm(user=request.user)
 
-            context = {
-                'form': form,
-                'books': books,
-                'query': query,
-            }
-            return render(request, 'project/add_review.html', context)
+        context = {
+            'form': form,
+            'books': books,
+            'query': query,
+        }
+        return render(request, 'project/add_review.html', context)
 
 #show book view
 class ShowBookView(View):

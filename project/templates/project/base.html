@@ -19,9 +19,7 @@ A template with common HTML code that will be re-used by all of the other templa
                 <li><a href="{% url 'book_history' %}" class="btn">Book History</a></li>
                 <li><a href="{% url 'add_book' %}" class="btn">Add Book</a></li>
                 <li><a href="{% url 'add' %}" class="btn">Add a Review</a> </li>
-                <li><a href="{% url 'logout' %}" class="btn">Logout</a></li>
-
-                <form action="{% url 'logout' %}" method="POST" style="display:inline;">
+                <form action="{% url 'logout' %}" method="POST">
                     {% csrf_token %}
                     <button type="submit" class="btn">Logout</button>
                 </form>
