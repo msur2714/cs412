@@ -1,22 +1,11 @@
-<!-- project/templates/project/book_detail.html -->
-{% extends 'project/base.html' %}
+{% extends "project/base.html" %}
 
 {% block content %}
 
-<h1 class="book-detail-title">{{ book.title }}</h1>
-<p class="book-detail-author"><strong>Author:</strong> {{ book.author }}</p>
-<p class="book-detail-genre"><strong>Genre:</strong> {{ book.genre }}</p>
-<p class="book-detail-description"><strong>Description:</strong> {{ book.description }}</p>
-
-<h2 class="reviews-title">Reviews</h2>
-<ul class="reviews-list">
-  {% for review in reviews %}
-    <li class="review-item">
-      <strong>{{ review.user.username }}:</strong>
-      <span class="review-rating">{{ review.rating }}/5</span> - 
-      <p class="review-content">{{ review.content }}</p>
-    </li>
-  {% endfor %}
-</ul>
+<body>
+    <h1>{{ book.title }}</h1>
+    <h2>by {{ book.author }}</h2>
+    <p>{{ book.description }}</p>
+</body>
 
 {% endblock %}

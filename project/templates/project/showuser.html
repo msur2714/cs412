@@ -1,0 +1,24 @@
+<!-- project/templates/project/showuser.html -->
+
+{% extends 'project/base.html' %}
+
+{% block content %}
+
+    <div class="container">
+
+        <hr>
+        
+        <h3>Name: {{ reader.first_name }} {{ reader.last_name }}</h3>
+        <p>Email: {{ reader.email }}</p>
+        <p>Total Reviews: {{ review_count }}</p>
+
+        <h3>Posted reviews on the following books:</h3>
+        {% for book in books %}
+            <p><a href="/books/{{book.id }}">{{ book.title }}</a></p>
+        
+		{% empty %}
+            <p>This reader has not posted any reviews yet.</p>
+        {% endfor %}
+    </div>
+
+{% endblock %}

@@ -2,23 +2,34 @@
 A template with common HTML code that will be re-used by all of the other templates.-->
 
 {% load static %}
+
 <html>
     <head>
-        <title>Book Journal</title>
+        <title>Book App!</title>
         <link rel="stylesheet" href="{% static 'project/styles.css' %}">
     </head>
 
-    <body class="body-bg">
+    <body>
         <nav>
-            <ul class="nav-list">
-                <!-- These URLs do not depend on which user is logged in -->
-                <li><a href="{% url 'book_list' %}" class="nav-link">Books</a></li>
+            <ul>
+                {% if request.user.is_authenticated %}
+                <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                <li><a href="{% url 'add' %}">Add a Review</a></li>
+
+                <form action="{% url 'logout' %}" method="POST" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn">Logout</button>
+                </form>
+                
+                {% else %}
+                <li><a href="{% url 'login' %}">Login</a></li>
+                <li><a href="{% url 'register' %}">Become a Reader</a></li>
+                {% endif %}
             </ul>
         </nav>
 
         {% block content %}
-        <!-- Fill in this section with specific page detail -->
+        
         {% endblock %}
-
     </body>
 </html>

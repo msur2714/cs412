@@ -1,0 +1,70 @@
+
+
+
+
+<!-- project/templates/project/show.html -->
+
+{% extends 'project/base.html' %}
+
+{% block content %}	
+
+<title>Add Book and review</title>
+
+<body>
+<div class="container">
+<a href="/logout">Logout</a>
+<a href="/dashboard">Home</a>
+<hr>
+	<h3>{{book.title}}</h3>
+	<h4>{{book.author}}</h4>
+<hr>
+<h3>Reviews</h3>
+<hr>
+{%for review in reviews %}
+	{% if review.rating == 1 %}
+			<img src="http://cdn.shopify.com/s/files/1/0134/3742/products/S_S-Classic-Star-Yellow-Art-Print.png" alt="" style="width:20px">
+			{% elif review.rating == 2 %}
+			<img src="http://cdn.shopify.com/s/files/1/0134/3742/products/S_S-Classic-Star-Yellow-Art-Print.png" alt="" style="width:20px">
+			<img src="http://cdn.shopify.com/s/files/1/0134/3742/products/S_S-Classic-Star-Yellow-Art-Print.png" alt="" style="width:20px">
+			{% elif review.rating == 3 %}
+			<img src="http://cdn.shopify.com/s/files/1/0134/3742/products/S_S-Classic-Star-Yellow-Art-Print.png" alt="" style="width:20px">
+			<img src="http://cdn.shopify.com/s/files/1/0134/3742/products/S_S-Classic-Star-Yellow-Art-Print.png" alt="" style="width:20px">
+			<img src="http://cdn.shopify.com/s/files/1/0134/3742/products/S_S-Classic-Star-Yellow-Art-Print.png" alt="" style="width:20px">
+			{% elif review.rating == 4 %}
+			<img src="http://cdn.shopify.com/s/files/1/0134/3742/products/S_S-Classic-Star-Yellow-Art-Print.png" alt="" style="width:20px">
+			<img src="http://cdn.shopify.com/s/files/1/0134/3742/products/S_S-Classic-Star-Yellow-Art-Print.png" alt="" style="width:20px">
+			<img src="http://cdn.shopify.com/s/files/1/0134/3742/products/S_S-Classic-Star-Yellow-Art-Print.png" alt="" style="width:20px">
+			<img src="http://cdn.shopify.com/s/files/1/0134/3742/products/S_S-Classic-Star-Yellow-Art-Print.png" alt="" style="width:20px">
+			{% else %}
+			<img src="http://cdn.shopify.com/s/files/1/0134/3742/products/S_S-Classic-Star-Yellow-Art-Print.png" alt="" style="width:20px">
+			<img src="http://cdn.shopify.com/s/files/1/0134/3742/products/S_S-Classic-Star-Yellow-Art-Print.png" alt="" style="width:20px">
+			<img src="http://cdn.shopify.com/s/files/1/0134/3742/products/S_S-Classic-Star-Yellow-Art-Print.png" alt="" style="width:20px">
+			<img src="http://cdn.shopify.com/s/files/1/0134/3742/products/S_S-Classic-Star-Yellow-Art-Print.png" alt="" style="width:20px">
+			<img src="http://cdn.shopify.com/s/files/1/0134/3742/products/S_S-Classic-Star-Yellow-Art-Print.png" alt="" style="width:20px">
+			<br>
+	{%endif%}
+	<a href="/users/{{review.user.id}}">{{review.user.first_name}}</a> says: {{review.review}}
+	<br>
+	Posted on: {{review.created_at}}
+	<hr>
+	{%endfor%}
+	<hr>
+	<h3>Add a review</h3>
+	<form action="/review_add/{{book.id}}/" method="post">
+		{%csrf_token%}
+		<textarea name="review" id="" cols="30" rows="10" required></textarea>
+		<br>
+		<select name="rating" id="" required>
+			<option value="1">1</option>
+			<option value="2">2</option>
+			<option value="3">3</option>
+			<option value="4">4</option>
+			<option value="5">5</option>
+		</select>
+		<br>
+		<input type="submit" value="Submit Review">
+	</form>
+</div>	
+</body>
+
+{% endblock %}	

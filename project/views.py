@@ -2,31 +2,327 @@ from django.shortcuts import render
 
 # Create your views here.
 
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, View
-from django.shortcuts import render
-from .models import Book, ReadingEntry, Review
-import random
+from django.shortcuts import render, reverse, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.db.models import Q
+from django.urls import reverse_lazy
+from django.contrib import messages
+from django.http import HttpResponse, HttpRequest
+from django.views.generic import CreateView, DetailView, UpdateView, TemplateView, ListView, FormView
+from django.views import View
+from .models import Reader, Book, Review, User, BookLog
+from .forms import CustomUserCreationForm, ReviewForm, BookForm, BookUpdateForm, BookLogForm
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import login 
+from typing import Any
 
-# List of all books
-class BookListView(ListView):
+# Authentication 
+from django.contrib.auth.mixins import LoginRequiredMixin
 
-    model = Book 
-    template_name = 'project/book_list.html'
-    context_object_name = 'books' # how to find the data in the template file
 
-# Book details
+class DashboardDetailView(LoginRequiredMixin, DetailView):
+    '''This view is for the homepage for the app once a user is logged in'''
+
+    model = Reader 
+    template_name = 'project/dashboard.html'
+    context_object_name = 'reader'
+
+    def get_login_url(self) -> str:
+        return reverse('login')
+
+    def get_object(self, queryset=None):
+        # Return the current logged-in user without needing the pk in the URL
+        return self.request.user
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        books = Book.objects.filter(user=self.request.user)
+        reviews = Review.objects.filter(user=self.request.user)
+        context['books'] = books
+        context['reviews'] = reviews
+        return context
+    
+class ReaderDetailView(LoginRequiredMixin, DetailView):
+    '''A view to display each Reader's profile with their reviews'''
+    
+    model = Reader
+    template_name = 'project/showuser.html'
+    context_object_name = 'reader'
+
+    def get_login_url(self) -> str:
+        return reverse('login')
+
+    def get_object(self, queryset=None):
+        # This will fetch the reader object based on user_id in the URL
+        return User.objects.get(id=self.kwargs['user_id'])
+
+    def get_success_url(self):
+        return reverse('show_user', kwargs={'id': self.object.id})
+
+class RegistrationView(CreateView):
+    '''Handle registration of new users.'''
+
+    template_name = 'project/register.html'
+    form_class = CustomUserCreationForm  # Use the custom form
+
+    def dispatch(self, request, *args, **kwargs):
+        '''Handle the User creation form submission'''
+
+        if self.request.POST:
+            # Handle POST requests
+            print(f"RegistrationView.dispatch: self.request.POST={self.request.POST}")
+
+            # Reconstruct the form from POST data
+            form = self.form_class(self.request.POST)
+
+            if not form.is_valid():
+                print(f"form.errors = {form.errors}")
+                return super().dispatch(request, *args, **kwargs)
+
+            # Save the form, creating a new User
+            user = form.save()
+            print(f"RegistrationView.dispatch: created user {user}")
+
+            # Log the User in
+            login(self.request, user)
+            print(f"RegistrationView.dispatch: {user} is logged in")
+
+            # Redirect to a different page
+            return redirect(reverse('show_user', args=[user.id]))
+
+        # Let CreateView.dispatch handle HTTP GET requests
+        return super().dispatch(request, *args, **kwargs)
+    
+class LoginView(View):
+    def post(self, request):
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)  # Log the user in
+            request.session['user_id'] = user.id  # Save user ID in the session
+            return redirect('dashboard')
+        else:
+            # Handle invalid credentials
+            return render(request, 'project/login.html', {'error': 'Invalid username or password'})
+
+
+
+# Class-based add view
+class AddView(View):
+    def get(self, request):
+        return render(request, 'project/add.html')
+
+class AddReviewView(LoginRequiredMixin, View):
+    model = Review
+    template_name = 'project/add.html'
+    form_class = ReviewForm
+
+    def get_login_url(self) -> str:
+        return reverse('login')
+    
+    def get_queryset(self): 
+        reader = Reader.objects.get(user=self.request.user)
+        book = BookLog.objects.get(user=self.request.user)
+        queryset = Review.objects.filter(reader=reader).order_by('-date_logged')
+        return queryset 
+    
+    def post(self, request):
+        book = Book.objects.create(
+            title=request.POST.get('title'),
+            author=request.POST.get('author'),
+            user=request.user,
+        )
+
+        Review.objects.create(
+            user=request.user,
+            book=book,
+            review=request.POST.get('review'),
+            rating=request.POST.get('rating'),
+        )
+
+        return redirect('dashboard')
+    
+    def add_review(request):
+        query = request.GET.get('q')
+        
+        for book in all_books:
+            book_log = BookLog.objects.filter(book=book).first()
+        
+            if query:
+                books = books.filter(Q(title__icontains=query) | Q(author__icontains=query))
+
+            if request.method == 'POST':
+                form = ReviewForm(request.POST, user=request.user)
+                if form.is_valid():
+                    review = form.save(commit=False)
+                    review.user = request.user.reader  # Assuming each User has one Reader
+                    review.save()
+                    return redirect('book_history')  # Redirect to a relevant page after submission
+            else:
+                form = ReviewForm(user=request.user)
+
+            context = {
+                'form': form,
+                'books': books,
+                'query': query,
+            }
+            return render(request, 'project/add_review.html', context)
+
+# Class-based show book view
+class ShowBookView(View):
+    def get(self, request, book_id):
+        book = get_object_or_404(Book, id=book_id)
+        reviews = Review.objects.filter(book=book)
+        context = {
+            'book': book,
+            'reviews': reviews
+        }
+        return render(request, 'project/show.html', context)
+
+# Class-based review add view
+class ReviewAddView(View):
+    def post(self, request, book_id):
+        book = get_object_or_404(Book, id=book_id)
+        review = Review(
+            rating=request.POST.get('rating'),
+            review=request.POST.get('review'),
+            user=User.objects.get(id=request.session['user_id']),
+            book=book
+        )
+        review.save()
+        return redirect('dashboard')
+
+class DeleteBookView(View):
+    '''This view is used to delete a book'''
+    def post(self, request, book_id):
+        book = get_object_or_404(Book, id=book_id)
+        book.delete()
+        return redirect('dashboard')
+
+
+class DeleteReviewView(View):
+    def post(self, request, review_id):
+        review = get_object_or_404(Review, id=review_id)
+
+        # Ensure that the user can only delete their own reviews
+        if review.user == request.user:
+            review.delete()
+            messages.success(request, "Review deleted successfully!")
+        else:
+            messages.error(request, "You cannot delete this review.")
+
+        return redirect('dashboard')  # Redirect to the dashboard or any other page
+
+
+# Class-based logout view
+class LogoutView(View):
+    def get(self, request):
+        del request.session['user_id']
+        return redirect('/')
+    
+
+class EditReviewView(UpdateView):
+    model = Review
+    form_class = ReviewForm
+    template_name = 'project/edit_review.html'
+    # Redirect to the dashboard after successful update
+    success_url = reverse_lazy('dashboard')
+
+    def get_object(self, queryset=None):
+        # Ensure the review being edited belongs to the logged-in user
+        review = super().get_object(queryset)
+        if review.user != self.request.user:
+            # If the review does not belong to the logged-in user, redirect to dashboard
+            raise PermissionDenied 
+        return review
+
+class CurrentlyReadingView(ListView):
+    model = Book
+    template_name = 'project/currently_reading.html'
+    context_object_name = 'currently_reading_books'
+
+    def get_queryset(self):
+        return Book.objects.filter(user=self.request.user, is_currently_reading=True)
+
+class BookHistoryView(ListView):
+    model = Book
+    template_name = 'project/book_history.html'
+    context_object_name = 'book_history'
+
+    def get_queryset(self):
+        query = self.request.GET.get('q')
+        queryset = Book.objects.filter(
+            Q(user=self.request.user) & (Q(is_read=True) | Q(is_currently_reading=True))
+        )
+        if query:
+            queryset = queryset.filter(
+                Q(title__icontains=query) | Q(author__icontains=query)
+            )
+        return queryset
+    
+class BookCreateView(CreateView):
+    model = Book
+    form_class = BookForm
+    template_name = 'project/book_form.html'
+    success_url = reverse_lazy('currently_reading')
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+
+class BookUpdateView(UpdateView):
+    model = Book
+    form_class = BookUpdateForm
+    template_name = 'project/book_update_form.html'
+    success_url = reverse_lazy('currently_reading')
+
+    def get_queryset(self):
+        return Book.objects.filter(user=self.request.user)
+
 class BookDetailView(DetailView):
-
-    model = Book 
+    model = Book
     template_name = 'project/book_detail.html'
     context_object_name = 'book'
 
-    def get_object(self): 
-        '''Return one Book chosed at random'''
+class CurrentlyReadingView(LoginRequiredMixin, TemplateView, FormView):
+    template_name = 'project/currently_reading.html'
+    form_class = BookLogForm
+    context_object_name = "currently_reading"
+    success_url = reverse_lazy('currently_reading')
 
-        # retrieve all of the articles 
-        all_books = Book.objects.all()
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        currently_reading_books = Book.objects.filter(user=self.request.user, is_currently_reading=True)
+        all_books = Book.objects.filter(user=self.request.user)
 
-        # pick one at random 
-        book = random.choice(all_books)
-        return book
+        # Prepare data for the chart
+        labels = [book.title for book in all_books]
+        data = []
+        for book in all_books:
+            book_log = BookLog.objects.filter(book=book).first()
+            if book_log and book_log.total_pages > 0:
+                progress = (book_log.current_page / book_log.total_pages) * 100
+            else:
+                progress = 0
+            data.append(progress)
+
+        context.update({
+            'currently_reading_books': currently_reading_books,
+            'all_books': all_books,
+            'labels': labels,
+            'data': data,
+        })
+        return context
+
+    def form_valid(self, form):
+        book_log = form.save(commit=False)
+        book_log.user = self.request.user
+        book_log.save()
+        return super().form_valid(form)
+
+@login_required
+def delete_book(request, pk):
+    book = get_object_or_404(Book, pk=pk, user=request.user)
+    book.delete()
+    return redirect('currently_reading')

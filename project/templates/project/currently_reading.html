@@ -1,0 +1,108 @@
+{% extends "project/base.html" %}
+
+{% block content %}
+
+  <h2>Currently Reading</h2>
+  <ul>
+    {% for book in currently_reading_books %}
+      <li>{{ book.title }} by {{ book.author }}</li>
+      <a href="{% url 'book_detail' book.pk %}">View Details</a>
+    {% endfor %}
+  </ul>
+
+  <div class="content">
+    <div class="jumbotron">
+      <div class="col-md-12">
+        {% if request.user.is_authenticated %}
+          <h4>Track your latest reading progress</h4>
+          <div class="inputbox d-flex flex-row mb-3 justify-content-center justify-content-space-between">
+            <form method="POST" action="{% url 'currently_reading' %}">
+              {% csrf_token %}
+              {{ form.book }}
+              {{ form.current_page }}
+              {{ form.total_pages }}
+              <input type="submit" class="button_add_book" value="Add book">
+              {% if messages %}
+                {% for message in messages %}
+                  <br><div class="form-group has-error">
+                    <br><div class="help-block" style="color: #F5F7F5;">{{ message }}</div>
+                  </div>
+                {% endfor %}
+              {% endif %}
+            </form>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <table id="id_book_table" class="table">
+    <thead>
+      <tr>
+        <th style="color:#F5F7F5">Title</th>
+        <th style="color:#F5F7F5">Current page</th>
+        <th style="color:#F5F7F5">Total pages</th>
+        <th style="color:#F5F7F5">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for book in currently_reading %}
+        <tr>
+          <td>{{ book.title }}</td>
+          <td>{{ book.current_page }}</td>
+          <td>{{ book.total_pages }}</td>
+          <td>
+            <form method="POST" action="{% url 'delete_book' book.pk %}">
+              {% csrf_token %}
+              <input type="image" class="delete_button" value="Delete" style="height: 17px; margin-top: 3px;">
+            </form>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <div style="width: 75%">
+    <canvas id="bar-chart"></canvas>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+  <script>
+    Chart.defaults.global.defaultFontFamily = "Gentium Book Plus";
+    Chart.defaults.global.defaultFontColor = '#F5F7F5';
+    new Chart(document.getElementById("bar-chart"), {
+      type: 'horizontalBar',
+      data: {
+        labels: {{ labels|safe }},
+        datasets: [{
+          data: {{ data|safe }},
+          label: "%",
+          backgroundColor: ["#8D2A00", "#B55318", "#BF6730", "#8D2A00",
+                            "#B55318", "#BF6730","#8D2A00", "#B55318",
+                            "#BF6730","#8D2A00", "#B55318", "#BF6730",
+                            "#8D2A00", "#B55318", "#BF6730", "#8D2A00",
+                            "#B55318", "#BF6730", "#8D2A00", "#B55318",
+                            "#BF6730", "#8D2A00", "#B55318", "#BF6730",
+                            "#8D2A00", "#B55318", "#BF6730", "#8D2A00",
+                            "#B55318", "#BF6730", "#8D2A00", "#B55318",
+                            "#BF6730", "#8D2A00", "#B55318", "#BF6730"]
+        }]
+      },
+      options: {
+        legend: { display: false },
+        title: { display: false },
+        scales: {
+          xAxes: [{
+            ticks: {
+              beginAtZero: true,
+              min: 0,
+              max: 100,
+              stepSize: 5,
+              fontFamily: "Gentium Book Plus",
+            }
+          }]
+        }
+      }
+    });
+  </script>
+
+{% endblock %}

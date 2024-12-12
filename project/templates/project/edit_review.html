@@ -1,0 +1,19 @@
+<!-- project/templates/project/edit_review.html -->
+
+{% extends 'project/base.html' %}
+
+{% block content %}
+
+    <div class="container">
+        <h3>Edit Review for "{{ review.book.title }}"</h3>
+
+        <form method="POST">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Save Changes</button>
+        </form>
+
+        <br>
+        <a href="{% url 'dashboard' %}">Cancel</a>
+    </div>
+{% endblock %}

@@ -1,0 +1,27 @@
+<!-- project/templates/project/login.html -->
+
+{% extends 'project/base.html' %}
+
+{% block content %}
+
+<h2>Login</h2>
+
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <label for="username">Username:</label>
+    <input type="text" id="username" name="username" required>
+    
+    <br>
+    
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" required>
+    
+    <br>
+    
+    <input type="submit" value="Login">
+</form>
+
+<br>
+<p>Don't have an account yet? <a href="{% url 'register' %}">Become a Reader</a></p>
+
+{% endblock %}

@@ -13,6 +13,7 @@ psycopg = "*"
 pillow = "*"
 plotly = "*"
 pandas = "*"
+matplotlib = "*"
 
 [dev-packages]
 

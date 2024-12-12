@@ -26,10 +26,11 @@ urlpatterns = [
     path("formdata/", include("formdata.urls")), #create a URL formdata/, and associate it with URLs in another file
     path("restaurant/", include("restaurant.urls")), #create a URL restaurant/, and associate it with URLs in another file
     path("blog/", include("blog.urls")), #create a URL blog/, and associate it with URLs in another file
-    path("mini_fb/", include("mini_fb.urls")), #create a URL mini_fb/, and associate it with URLs in another file
+    path("mini_fb/", include("mini_fb.urls")), #create a URL project/, and associate it with URLs in another file
     path("marathon_analytics/", include("marathon_analytics.urls")), #create a URL marathon_analytics/, and associate it with URLs in another file
     path("voter_analytics/", include("voter_analytics.urls")), #create a URL voter_analytics/, and associate it with URLs in another file
     path("project/", include("project.urls")), #create a URL project/, and associate it with URLs in another file
+
 ] 
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
